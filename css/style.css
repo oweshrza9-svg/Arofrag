@@ -868,3 +868,140 @@ TESTIMONIALS
 }
 
 }
+/*=========================================
+FOOTER
+=========================================*/
+
+.footer{
+    background:#0b0b0b;
+    color:#fff;
+    padding:90px 8% 0;
+}
+
+.footer-container{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr 1.5fr;
+    gap:50px;
+}
+
+.footer-logo{
+    width:110px;
+    margin-bottom:25px;
+}
+
+.footer-col p{
+    color:#bcbcbc;
+    line-height:1.8;
+}
+
+.footer-col h3{
+    font-family:'Cinzel',serif;
+    margin-bottom:25px;
+    color:#C8A96A;
+}
+
+.footer-col ul li{
+    margin-bottom:15px;
+}
+
+.footer-col ul li a{
+    color:#d7d7d7;
+    transition:.3s;
+}
+
+.footer-col ul li a:hover{
+    color:#C8A96A;
+    padding-left:6px;
+}
+
+.social-links{
+    display:flex;
+    gap:15px;
+    margin-top:30px;
+}
+
+.social-links a{
+    width:45px;
+    height:45px;
+    border:1px solid #2a2a2a;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    transition:.35s;
+}
+
+.social-links a:hover{
+    background:#C8A96A;
+    color:#111;
+}
+
+.newsletter-form{
+    margin-top:25px;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.newsletter-form input{
+    padding:15px;
+    background:#151515;
+    border:1px solid #333;
+    color:#fff;
+    outline:none;
+}
+
+.newsletter-form input:focus{
+    border-color:#C8A96A;
+}
+
+.newsletter-form button{
+    padding:15px;
+    background:#C8A96A;
+    border:none;
+    cursor:pointer;
+    font-weight:600;
+    transition:.35s;
+}
+
+.newsletter-form button:hover{
+    background:#fff;
+}
+
+.footer-bottom{
+    border-top:1px solid #222;
+    margin-top:70px;
+    padding:25px 0;
+    text-align:center;
+}
+
+.footer-bottom p{
+    color:#999;
+}
+
+@media(max-width:992px){
+
+.footer-container{
+    grid-template-columns:1fr 1fr;
+}
+
+}
+
+@media(max-width:768px){
+
+.footer-container{
+    grid-template-columns:1fr;
+}
+
+.footer{
+    text-align:center;
+}
+
+.footer-logo{
+    margin:auto auto 25px;
+}
+
+.social-links{
+    justify-content:center;
+}
+
+}
