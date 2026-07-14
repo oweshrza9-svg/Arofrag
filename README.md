@@ -157,7 +157,7 @@ Optimized for
 
 Final Year BCA Student
 
-Full Stack Developer (Learning)
+Full Stack Developer 
 
 AI & Software Engineering Enthusiast
 
