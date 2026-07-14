@@ -1,0 +1,18 @@
+{
+    name,
+    slug,
+    category,
+    price,
+    oldPrice,
+    rating,
+    reviews,
+    badge,
+    stock,
+    featured,
+    newArrival,
+    sizes,
+    image,
+    gallery,
+    description,
+    notes
+}

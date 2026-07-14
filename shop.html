@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop | AROFRAG</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/shop.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Announcement -->
+
+    <div class="announcement-bar">
+        Free Shipping on Orders Above ₹999 • Premium Alcohol-Free Attars • COD Available
+    </div>
+
+    <!-- Navbar -->
+
+    <header>
+
+        <nav class="navbar">
+
+            <a href="index.html" class="logo">
+                <!-- Use your exact logo path -->
+                <img src="YOUR_LOGO_PATH" alt="AROFRAG">
+            </a>
+
+            <ul class="nav-menu">
+
+                <li><a href="index.html">Home</a></li>
+
+                <li><a href="shop.html" class="active">Shop</a></li>
+
+                <li><a href="about.html">About</a></li>
+
+                <li><a href="contact.html">Contact</a></li>
+
+            </ul>
+
+            <div class="nav-icons">
+
+                <a href="#" title="n"><i class="fa-solid fa-magnifying-glass"></i></a>
+
+                <a href="#" title="n"><i class="fa-regular fa-heart"></i></a>
+
+                <a href="login.html" title="n"><i class="fa-regular fa-user"></i></a>
+
+                <a href="cart.html" title="n">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </a>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+    <!-- Shop Hero -->
+
+    <section class="shop-hero">
+
+        <div class="shop-overlay"></div>
+
+        <div class="shop-content">
+
+            <h1>Shop</h1>
+
+            <p>
+
+                Discover handcrafted luxury attars inspired by tradition.
+
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- Filters -->
+
+    <section class="shop-controls">
+
+        <div class="search-box">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search fragrances...">
+
+        </div>
+
+        <select id="categoryFilter">
+
+            <option value="all">All Categories</option>
+
+        </select>
+
+        <select id="sortProducts">
+
+            <option value="default">Sort By</option>
+
+            <option value="low-high">
+                Price : Low to High
+            </option>
+
+            <option value="high-low">
+                Price : High to Low
+            </option>
+
+            <option value="az">
+                Name : A-Z
+            </option>
+
+        </select>
+
+    </section>
+
+    <!-- Product Count -->
+
+    <div class="results-info">
+
+        <p id="productCount">
+            Loading Products...
+        </p>
+
+    </div>
+
+    <!-- Dynamic Products -->
+
+    <section class="products-section">
+
+        <div
+            class="products-grid"
+            id="productsContainer">
+
+        </div>
+
+    </section>
+
+    <!-- Pagination -->
+
+    <div class="pagination" id="pagination"></div>
+
+    <!-- Footer -->
+
+    <!-- Reuse the same footer from index.html -->
+
+    <script src="js/shop.js"></script>
+
+</body>
+</html>
