@@ -683,3 +683,97 @@ WHY US
 }
 
 }
+
+/*=========================================
+BRAND STORY
+=========================================*/
+
+.brand-story{
+    position:relative;
+    min-height:650px;
+    background:url("../assets/images/YOUR_BANNER_IMAGE_NAME") center center/cover no-repeat;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+.story-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.55);
+}
+
+.story-content{
+    position:relative;
+    z-index:2;
+    max-width:760px;
+    padding:20px;
+    color:#fff;
+}
+
+.story-tag{
+    display:inline-block;
+    margin-bottom:18px;
+    color:#D4AF37;
+    font-size:14px;
+    letter-spacing:4px;
+    text-transform:uppercase;
+}
+
+.story-content h2{
+    font-family:'Cinzel',serif;
+    font-size:56px;
+    line-height:1.3;
+    margin-bottom:30px;
+}
+
+.story-content p{
+    max-width:620px;
+    margin:auto;
+    font-size:17px;
+    line-height:1.9;
+    color:#ddd;
+}
+
+.story-btn{
+    display:inline-block;
+    margin-top:45px;
+    padding:16px 42px;
+    border:2px solid #D4AF37;
+    color:#fff;
+    transition:.35s;
+}
+
+.story-btn:hover{
+    background:#D4AF37;
+    color:#111;
+}
+
+@media(max-width:992px){
+
+.story-content h2{
+    font-size:42px;
+}
+
+}
+
+@media(max-width:768px){
+
+.brand-story{
+    min-height:500px;
+}
+
+.story-content h2{
+    font-size:34px;
+}
+
+.story-content p{
+    font-size:15px;
+}
+
+.story-btn{
+    padding:14px 30px;
+}
+
+}
