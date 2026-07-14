@@ -1,9 +1,5 @@
 # 🌿 AROFRAG – Premium Alcohol-Free Attar Store
-
-<p align="center">
-  <img src="assets/logo.png" alt="AROFRAG Logo" width="180">
-</p>
-
+https://arofrag.netlify.app/
 <p align="center">
 A modern luxury fragrance e-commerce website built with performance, elegance, and scalability in mind.
 </p>
