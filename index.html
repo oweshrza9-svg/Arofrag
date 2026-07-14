@@ -4,74 +4,91 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>AROFRAG | Luxury Attars</title>
 
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+          rel="stylesheet">
 
     <!-- Font Awesome -->
+
     <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="stylesheet"
+          href="css/style.css">
 
 </head>
 
 <body>
 
-    <!-- ================= NAVBAR ================= -->
+    <!-- ========================= -->
+    <!-- NAVBAR -->
+    <!-- ========================= -->
 
     <header>
 
         <nav class="navbar">
 
-            <div class="logo">
+            <a href="#" class="logo">
 
-                <img src="assets/images/logo.png" alt="AROFRAG Logo">
+                <img src="assets/images/logo.png"
+                     alt="AROFRAG Logo">
 
-                <h2>AROFRAG</h2>
+            </a>
 
-            </div>
+            <ul class="nav-menu">
 
-            <ul class="nav-links">
+                <li>
+                    <a href="#" class="active">Home</a>
+                </li>
 
-                <li><a href="#" class="active">Home</a></li>
+                <li>
+                    <a href="#">Collection</a>
+                </li>
 
-                <li><a href="shop.html">Shop</a></li>
+                <li>
+                    <a href="#">About</a>
+                </li>
 
-                <li><a href="about.html">About</a></li>
-
-                <li><a href="contact.html">Contact</a></li>
+                <li>
+                    <a href="#">Contact</a>
+                </li>
 
             </ul>
 
             <div class="nav-icons">
 
-                <a href="#">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </a>
+                <i class="fa-solid fa-magnifying-glass"></i>
 
-                <a href="login.html">
-                    <i class="fa-regular fa-user"></i>
-                </a>
+                <i class="fa-regular fa-heart"></i>
 
-                <a href="cart.html" class="cart">
+                <i class="fa-regular fa-user"></i>
+
+                <div class="cart">
 
                     <i class="fa-solid fa-bag-shopping"></i>
 
                     <span>0</span>
 
-                </a>
+                </div>
 
             </div>
 
-            <div class="menu-btn">
+            <div class="menu-toggle">
 
                 <i class="fa-solid fa-bars"></i>
 
@@ -81,55 +98,88 @@
 
     </header>
 
-    <!-- ================= HERO ================= -->
+
+
+    <!-- ========================= -->
+    <!-- HERO -->
+    <!-- ========================= -->
 
     <section class="hero">
 
-        <div class="hero-overlay"></div>
+        <div class="overlay"></div>
 
         <div class="hero-content">
 
-            <p class="subtitle">
-                Luxury Alcohol-Free Attars
-            </p>
-
             <h1>
 
-                Crafted By Tradition.
-                <br>
-
-                Worn With Elegance.
+                AROFRAG
 
             </h1>
 
-            <p class="description">
+            <h2>
 
-                Discover handcrafted premium attars inspired by centuries of Indian perfumery.
-                Long-lasting, alcohol-free, and made for every occasion.
+                The Essence of Pure Nature
+
+            </h2>
+
+            <h3>
+
+                Premium Handcrafted Attar
+
+            </h3>
+
+            <p>
+
+                DISCOVER YOUR SCENT.
+                NATURALLY.
 
             </p>
 
-            <div class="hero-buttons">
+            <a href="#collection"
+               class="hero-btn">
 
-                <a href="shop.html" class="btn-primary">
+                Explore Collection
 
-                    Explore Collection
-
-                </a>
-
-                <a href="#featured" class="btn-secondary">
-
-                    Best Sellers
-
-                </a>
-
-            </div>
+            </a>
 
         </div>
 
     </section>
 
-    <!-- JS -->
+
+
+    <!-- ========================= -->
+    <!-- NEW ARRIVALS -->
+    <!-- ========================= -->
+
+    <section id="collection"
+             class="collection">
+
+        <div class="section-title">
+
+            <span>
+
+                LET'S SHOP
+
+            </span>
+
+            <h2>
+
+                Signature Collection
+
+            </h2>
+
+        </div>
+
+        <div class="product-grid">
+
+            <!-- JS will load products here -->
+
+        </div>
+
+    </section>
+
+
 
     <script src="js/app.js"></script>
 
