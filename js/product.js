@@ -72,12 +72,20 @@ if(addCartBtn){
 
     addCartBtn.addEventListener("click",()=>{
 
-        showToast("Product added to cart.");
+        const selectedSize=document.querySelector(".size-btn.active").textContent;
+
+        const quantity=parseInt(quantityInput.value);
+
+        addToCart({
+            id:productId,
+            name:productTitle.textContent,
+            price:Number(currentPrice.textContent.replace(/[^\d]/g,"")),
+            image:mainImage.src
+        },selectedSize,quantity);
 
     });
 
 }
-
 /*=========================================
 WISHLIST
 =========================================*/
