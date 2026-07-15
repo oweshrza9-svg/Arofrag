@@ -400,4 +400,40 @@ function renderSearchResults(products) {
     searchResults.innerHTML = html;
 
 }
+/*=========================================
+SEARCH MODAL
+=========================================*/
 
+const searchBtn=document.querySelector(".search-btn");
+const searchModal=document.querySelector(".search-modal");
+const closeSearch=document.querySelector(".close-search");
+
+if(searchBtn&&searchModal){
+
+    searchBtn.addEventListener("click",()=>{
+
+        searchModal.classList.add("show");
+
+    });
+
+}
+
+if(closeSearch){
+
+    closeSearch.addEventListener("click",()=>{
+
+        searchModal.classList.remove("show");
+
+    });
+
+}
+
+window.addEventListener("click",(event)=>{
+
+    if(event.target===searchModal){
+
+        searchModal.classList.remove("show");
+
+    }
+
+});

@@ -82,8 +82,12 @@ function updateCartCount(){
 
 }
 
-document.addEventListener("DOMContentLoaded",updateCartCount);
+document.addEventListener("DOMContentLoaded",()=>{
 
+    updateCartCount();
+    renderCart();
+
+});
 /*=========================================
 RENDER CART
 =========================================*/
@@ -166,5 +170,97 @@ function renderCart(){
     document.getElementById("total").textContent=formatPrice(subtotal);
 
     attachCartEvents();
+
+}
+/*=========================================
+CART EVENTS
+=========================================*/
+
+function attachCartEvents(){
+
+    document.querySelectorAll(".increase").forEach(button=>{
+
+        button.addEventListener("click",()=>{
+
+            updateQuantity(
+                button.dataset.id,
+                button.dataset.size,
+                1
+            );
+
+        });
+
+    });
+
+    document.querySelectorAll(".decrease").forEach(button=>{
+
+        button.addEventListener("click",()=>{
+
+            updateQuantity(
+                button.dataset.id,
+                button.dataset.size,
+                -1
+            );
+
+        });
+
+    });
+
+    document.querySelectorAll(".remove-item").forEach(button=>{
+
+        button.addEventListener("click",()=>{
+
+            removeItem(
+                button.dataset.id,
+                button.dataset.size
+            );
+
+        });
+
+    });
+
+}
+
+/*=========================================
+UPDATE QUANTITY
+=========================================*/
+
+function updateQuantity(id,size,change){
+
+    const cart=getCart();
+
+    const product=cart.find(item=>
+        item.id==id &&
+        item.size===size
+    );
+
+    if(!product) return;
+    product.quantity+=change;
+
+    if(product.quantity<=0){
+        removeItem(id,size);
+        return;
+
+    }
+
+    saveCart(cart);
+    updateCartCount();
+    renderCart();
+
+}
+/*=========================================
+REMOVE ITEM
+=========================================*/
+
+function removeItem(id,size){
+
+    let cart=getCart();
+    cart=cart.filter(item=>
+        !(item.id==id && item.size===size)
+    );
+
+    saveCart(cart);
+    updateCartCount();
+    renderCart();
 
 }
