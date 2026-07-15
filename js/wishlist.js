@@ -1,39 +1,121 @@
 /*=========================================
-WISHLIST
+GLOBAL
 =========================================*/
 
-const WISHLIST_KEY="arofrag_wishlist";
+const wishlistContainer=document.getElementById("wishlistContainer");
 
-function getWishlist(){
+/*=========================================
+INITIALIZE
+=========================================*/
 
-    return JSON.parse(localStorage.getItem(WISHLIST_KEY))||[];
+document.addEventListener("DOMContentLoaded",()=>{
+
+renderWishlist();
+
+});
+
+/*=========================================
+RENDER
+=========================================*/
+
+async function renderWishlist(){
+
+if(!wishlistContainer) return;
+
+const products=await getProducts();
+
+const wishlist=getWishlist();
+
+const items=products.filter(product=>wishlist.includes(product.id));
+
+wishlistContainer.innerHTML="";
+
+if(items.length===0){
+
+wishlistContainer.innerHTML=`
+
+<h2>Your wishlist is empty.</h2>
+
+`;
+
+return;
 
 }
 
-function saveWishlist(items){
+items.forEach(product=>{
 
-    localStorage.setItem(WISHLIST_KEY,JSON.stringify(items));
+wishlistContainer.innerHTML+=`
+
+<div class="wishlist-card">
+
+<img src="${product.image}" alt="${product.name}">
+
+<div class="wishlist-info">
+
+<h3>${product.name}</h3>
+
+<p>${formatPrice(product.price)}</p>
+
+<div class="wishlist-actions">
+
+<a href="product.html?id=${product.id}">
+
+View
+
+</a>
+
+<button class="remove-btn" data-id="${product.id}">
+
+Remove
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+attachWishlistEvents();
 
 }
 
-function toggleWishlist(productId){
+/*=========================================
+EVENTS
+=========================================*/
 
-    let wishlist=getWishlist();
+function attachWishlistEvents(){
 
-    if(wishlist.includes(productId)){
+document.querySelectorAll(".remove-btn").forEach(button=>{
 
-        wishlist=wishlist.filter(id=>id!==productId);
+button.addEventListener("click",()=>{
 
-        showToast("Removed from wishlist.");
+removeWishlist(button.dataset.id);
 
-    }else{
+});
 
-        wishlist.push(productId);
+});
 
-        showToast("Added to wishlist.");
+}
 
-    }
+/*=========================================
+REMOVE
+=========================================*/
 
-    saveWishlist(wishlist);
+function removeWishlist(id){
+
+let wishlist=getWishlist();
+
+wishlist=wishlist.filter(item=>item!=id);
+
+saveWishlist(wishlist);
+
+renderWishlist();
+
+showToast("Removed from wishlist.");
 
 }
