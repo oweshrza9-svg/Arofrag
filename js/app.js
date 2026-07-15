@@ -7,6 +7,11 @@ const navToggle = document.querySelector(".nav-toggle");
 const navMenu = document.querySelector(".nav-links");
 const navLinks = document.querySelectorAll(".nav-links a");
 const scrollTopBtn = document.querySelector(".scroll-top");
+const searchBtn = document.querySelector(".search-btn");
+const searchModal = document.querySelector(".search-modal");
+const closeSearch = document.querySelector(".close-search");
+const searchInput = document.querySelector(".search-input");
+const searchResults = document.querySelector(".search-results");
 
 /*=========================================
 STICKY HEADER
@@ -255,3 +260,144 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 
 });
+
+/*=========================================
+SEARCH MODAL
+=========================================*/
+
+if (searchBtn && searchModal) {
+
+    searchBtn.addEventListener("click", () => {
+
+        searchModal.classList.add("show");
+
+        if (searchInput) {
+            searchInput.focus();
+        }
+
+    });
+
+}
+
+if (closeSearch && searchModal) {
+
+    closeSearch.addEventListener("click", () => {
+
+        searchModal.classList.remove("show");
+
+        if (searchInput) {
+            searchInput.value = "";
+        }
+
+        if (searchResults) {
+            searchResults.innerHTML = "";
+        }
+
+    });
+
+}
+
+window.addEventListener("click", (event) => {
+
+    if (event.target === searchModal) {
+
+        searchModal.classList.remove("show");
+
+    }
+
+});
+
+window.addEventListener("keydown", (event) => {
+
+    if (event.key === "Escape") {
+
+        searchModal.classList.remove("show");
+
+    }
+
+});
+
+/*=========================================
+LIVE SEARCH
+=========================================*/
+
+if (searchInput) {
+
+    searchInput.addEventListener("input", async (e) => {
+
+        const keyword = e.target.value.trim().toLowerCase();
+
+        if (keyword === "") {
+
+            searchResults.innerHTML = "";
+
+            return;
+
+        }
+
+        const products = await getProducts();
+
+        const filteredProducts = products.filter(product => {
+
+            return (
+
+                product.name.toLowerCase().includes(keyword) ||
+
+                product.category.toLowerCase().includes(keyword)
+
+            );
+
+        });
+
+        renderSearchResults(filteredProducts);
+
+    });
+
+}
+
+/*=========================================
+SEARCH RESULT CARDS
+=========================================*/
+
+function renderSearchResults(products) {
+
+    if (!searchResults) return;
+
+    if (products.length === 0) {
+
+        searchResults.innerHTML = `
+            <p class="empty-search">
+                No fragrance found.
+            </p>
+        `;
+
+        return;
+
+    }
+
+    let html = "";
+
+    products.forEach(product => {
+
+        html += `
+            <a href="product.html?id=${product.id}" class="search-item">
+
+                <img src="${product.image}" alt="${product.name}">
+
+                <div>
+
+                    <h4>${product.name}</h4>
+
+                    <span>${formatPrice(product.price)}</span>
+
+                </div>
+
+            </a>
+        `;
+
+    });
+
+    searchResults.innerHTML = html;
+
+}
+
