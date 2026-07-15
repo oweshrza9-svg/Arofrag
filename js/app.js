@@ -157,4 +157,101 @@ if (newsletterForm) {
 
     });
 
+}  
+   /*=========================================
+GLOBAL ELEMENTS
+=========================================*/
+
+const header = document.querySelector("header");
+const navbar = document.querySelector(".navbar");
+const menuToggle = document.querySelector(".menu-toggle");
+const navMenu = document.querySelector(".nav-menu");
+const navLinks = document.querySelectorAll(".nav-menu a");
+
+/*=========================================
+STICKY NAVBAR
+=========================================*/
+
+window.addEventListener("scroll", () => {
+
+    if (window.scrollY > 60) {
+        header.classList.add("sticky");
+    } else {
+        header.classList.remove("sticky");
+    }
+
+});
+
+/*=========================================
+MOBILE MENU
+=========================================*/
+
+if (menuToggle && navMenu) {
+
+    menuToggle.addEventListener("click", () => {
+
+        navMenu.classList.toggle("active");
+
+        menuToggle.classList.toggle("active");
+
+    });
+
 }
+
+/*=========================================
+CLOSE MENU AFTER CLICK
+=========================================*/
+
+navLinks.forEach(link => {
+
+    link.addEventListener("click", () => {
+
+        navMenu.classList.remove("active");
+
+        menuToggle.classList.remove("active");
+
+    });
+
+});
+
+/*=========================================
+ACTIVE PAGE
+=========================================*/
+
+const currentPage = window.location.pathname.split("/").pop();
+
+navLinks.forEach(link => {
+
+    const href = link.getAttribute("href");
+
+    if (href === currentPage) {
+
+        link.classList.add("active");
+
+    }
+
+});
+
+/*=========================================
+SMOOTH SCROLL
+=========================================*/
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+
+    anchor.addEventListener("click", function (e) {
+
+        const target = document.querySelector(this.getAttribute("href"));
+
+        if (!target) return;
+
+        e.preventDefault();
+
+        target.scrollIntoView({
+
+            behavior: "smooth"
+
+        });
+
+    });
+
+});
