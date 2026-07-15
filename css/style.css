@@ -1301,3 +1301,63 @@ margin-top:25px;
 max-height:350px;
 overflow-y:auto;
 }
+.product-actions{
+    display:flex;
+    gap:10px;
+    margin-top:15px;
+}
+
+.view-btn,
+.cart-btn,
+.buy-btn{
+    flex:1;
+    padding:10px;
+    border:none;
+    border-radius:6px;
+    font-size:14px;
+    cursor:pointer;
+    text-decoration:none;
+    text-align:center;
+    transition:.3s;
+}
+
+.view-btn{
+    background:#111;
+    color:#fff;
+}
+
+.cart-btn{
+    background:#d4af37;
+    color:#111;
+}
+
+.buy-btn{
+    background:#d4af37;
+    color:#fff;
+}
+.buy-btn:hover{
+    background:#111;
+    color:#d4af37;
+    border: 1px solid #d4af37;
+
+}
+
+.wishlist-btn{
+    width:42px;
+    border:1px solid #ddd;
+    border-radius:6px;
+    background:#fff;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.view-btn:hover,
+.cart-btn:hover,
+
+.wishlist-btn:hover{
+    opacity:.9;
+}
+.def-logo-size{
+    width: 200px;
+    height: 200px;
+}
