@@ -1,252 +1,315 @@
-const params=new URLSearchParams(window.location.search);
-const productId=params.get("id");
+/**
+ * AROFRAG - Product Details Controller
+ * Handles loading product parameters, interactive image galleries, 
+ * bottle size changes, and the dynamic cart/wishlist engines.
+ */
 
-const mainImage=document.getElementById("mainProductImage");
-const productCategory=document.querySelector(".product-category");
-const productTitle=document.querySelector(".product-title");
-const currentPrice=document.querySelector(".current-price");
-const oldPrice=document.querySelector(".old-price");
-const reviews=document.querySelector(".reviews");
-const description=document.querySelector(".product-description");
-const stock=document.querySelector(".product-stock strong");
-const thumbnailGallery=document.querySelector(".thumbnail-gallery");
-const sizeContainer=document.querySelector(".size-selector");
-const quantityInput=document.getElementById("quantity");
-const minusBtn=document.querySelector(".qty-minus");
-const plusBtn=document.querySelector(".qty-plus");
-const addCartBtn=document.querySelector(".add-cart-btn");
-const wishlistBtn=document.querySelector(".wishlist-btn");
-/*=========================================
-INITIALIZE
-=========================================*/
+// --- Global Active Variables ---
+let currentProduct = null;
+let selectedSize = '6ml'; // default size
+let selectedPrice = 0;
 
-document.addEventListener("DOMContentLoaded",async()=>{
+// Fallback Product list matching shop.js to prevent empty pages if JSON load fails
+const fallbackProductsList = [
+    {
+        "id": 1,
+        "name": "Gulab Attar",
+        "category": "Floral",
+        "price": 599,
+        "image": "assets/images/products/gulab.jpg",
+        "description": "Handcrafted pure Kannauj rose petals distilled gently to capture timeless luxury."
+    },
+    {
+        "id": 2,
+        "name": "Mitti Attar",
+        "category": "Earthy",
+        "price": 799,
+        "image": "assets/images/products/mitti.jpg",
+        "description": "The scent of first rain falling on baked soil, traditional and incredibly calming."
+    },
+    {
+        "id": 3,
+        "name": "White Oud",
+        "category": "Woody",
+        "price": 999,
+        "image": "assets/images/products/white-oud.jpg",
+        "description": "Rich resinous Agarwood balanced perfectly with soft vanilla and light spices."
+    },
+    {
+        "id": 4,
+        "name": "Mogra Attar",
+        "category": "Floral",
+        "price": 649,
+        "image": "assets/images/products/mogra.jpg",
+        "description": "Sweet, calming Jasmine Sambac blossoms extracted in a traditional sandalwood base."
+    },
+    {
+        "id": 5,
+        "name": "Kesar Chandan",
+        "category": "Spicy",
+        "price": 899,
+        "image": "assets/images/products/kesar-chandan.jpg",
+        "description": "Premium Kashmiri Saffron infused inside a creamy Mysore Sandalwood base."
+    },
+    {
+        "id": 6,
+        "name": "Royal Amber",
+        "category": "Woody",
+        "price": 1199,
+        "image": "assets/images/products/amber.jpg",
+        "description": "Deep balsamic warmth blended with golden resins for an imperial experience."
+    }
+];
 
-    const products=await getProducts();
-
-    const product=getProductById(products,productId);
-
-    if(!product) return;
-
-    renderProduct(product);
-
+// --- Initialize Page ---
+document.addEventListener('DOMContentLoaded', () => {
+    loadProductDetails();
+    setupTabControls();
 });
 
-/*=========================================
-QUANTITY
-=========================================*/
+/**
+ * 1. Reads the "?id=X" from the URL and fetches corresponding details
+ */
+function loadProductDetails() {
+    // Read parameters from URL (e.g. ?id=2)
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = parseInt(urlParams.get('id'));
 
-if(minusBtn){
+    // If there is no ID parameter, redirect to the shop page
+    if (!productId) {
+        window.location.href = 'shop.html';
+        return;
+    }
 
-    minusBtn.addEventListener("click",()=>{
+    // Try fetching from the server, fall back to list if offline
+    fetch('json/products.json')
+        .then(response => {
+            if (!response.ok) throw new Error("Offline fallbacks active.");
+            return response.json();
+        })
+        .then(data => {
+            initializeProductPage(data, productId);
+        })
+        .catch(() => {
+            initializeProductPage(fallbackProductsList, productId);
+        });
+}
 
-        let value=parseInt(quantityInput.value);
+/**
+ * 2. Matches product details and renders them dynamically onto HTML IDs/Classes
+ */
+function initializeProductPage(productsArray, targetId) {
+    // Find matching product
+    const found = productsArray.find(item => item.id === targetId);
 
-        if(value>1){
+    if (!found) {
+        // Product doesn't exist, go back to shop
+        window.location.href = 'shop.html';
+        return;
+    }
 
-            quantityInput.value=value-1;
+    currentProduct = found;
+    selectedPrice = currentProduct.price; // Start with default 6ml base price
 
+    // Render Basic Info
+    const pName = document.querySelector('.product-title') || document.getElementById('productName');
+    const pPrice = document.querySelector('.product-price') || document.getElementById('productPrice');
+    const pDesc = document.querySelector('.product-description') || document.getElementById('productDescription');
+    const pCategory = document.querySelector('.product-category') || document.getElementById('productCategory');
+    const pMainImg = document.getElementById('mainProductImg') || document.querySelector('.main-img');
+
+    if (pName) pName.textContent = currentProduct.name;
+    if (pDesc) pDesc.textContent = currentProduct.description;
+    if (pCategory) pCategory.textContent = currentProduct.category;
+    if (pPrice) pPrice.textContent = window.formatCurrency(selectedPrice);
+    
+    if (pMainImg) {
+        pMainImg.src = currentProduct.image || 'assets/arologopng.png';
+        pMainImg.alt = currentProduct.name;
+    }
+
+    // Set up interactive UI control listeners
+    setupThumbnailGallery();
+    setupSizeSelectors();
+    setupQuantityCounters();
+    setupSubmissionButtons();
+}
+
+/**
+ * 3. Handles click actions on secondary thumbnail images
+ */
+function setupThumbnailGallery() {
+    const thumbnails = document.querySelectorAll('.thumbnail-img');
+    const mainImg = document.getElementById('mainProductImg') || document.querySelector('.main-img');
+
+    if (!thumbnails.length || !mainImg) return;
+
+    thumbnails.forEach(thumb => {
+        thumb.addEventListener('click', () => {
+            // Remove active classes
+            thumbnails.forEach(t => t.classList.remove('active'));
+            // Set clicked thumbnail active
+            thumb.classList.add('active');
+            // Swap main display image
+            mainImg.src = thumb.src;
+        });
+    });
+}
+
+/**
+ * 4. Manages Bottle Size selection and adjusts prices proportionally
+ */
+function setupSizeSelectors() {
+    // Handle either raw radio buttons or standard drop-down selectors
+    const sizeSelector = document.getElementById('sizeSelect') || document.querySelector('.size-selector');
+    const pPrice = document.querySelector('.product-price') || document.getElementById('productPrice');
+
+    if (!sizeSelector) return;
+
+    // Listen for dropdown changes
+    sizeSelector.addEventListener('change', (e) => {
+        selectedSize = e.target.value; // e.g. "3ml", "6ml", "12ml"
+
+        // Scale pricing proportional to the base 6ml attar price:
+        // - 3ml is half price (50%) plus a minor bottling overhead
+        // - 6ml is standard (100%)
+        // - 12ml gets a loyalty discount (180% instead of 200%)
+        const basePrice = currentProduct.price;
+        if (selectedSize === '3ml') {
+            selectedPrice = Math.round((basePrice * 0.5) + 50);
+        } else if (selectedSize === '12ml') {
+            selectedPrice = Math.round(basePrice * 1.8);
+        } else {
+            selectedSize = '6ml';
+            selectedPrice = basePrice;
         }
 
-    });
-
-}
-
-if(plusBtn){
-
-    plusBtn.addEventListener("click",()=>{
-
-        let value=parseInt(quantityInput.value);
-
-        quantityInput.value=value+1;
-
-    });
-
-}
-
-/*=========================================
-ADD TO CART
-=========================================*/
-
-if(addCartBtn){
-
-    addCartBtn.addEventListener("click",()=>{
-
-        const selectedSize=document.querySelector(".size-btn.active").textContent;
-
-        const quantity=parseInt(quantityInput.value);
-
-        addToCart({
-            id:productId,
-            name:productTitle.textContent,
-            price:Number(currentPrice.textContent.replace(/[^\d]/g,"")),
-            image:mainImage.src
-        },selectedSize,quantity);
-
-    });
-
-}
-/*=========================================
-WISHLIST
-=========================================*/
-
-if(wishlistBtn){
-
-    wishlistBtn.addEventListener("click",()=>{
-
-        wishlistBtn.classList.toggle("active");
-
-        if(wishlistBtn.classList.contains("active")){
-
-            showToast("Added to wishlist.");
-
-        }else{
-
-            showToast("Removed from wishlist.");
-
+        // Update the display price
+        if (pPrice) {
+            pPrice.textContent = window.formatCurrency(selectedPrice);
         }
-
     });
-
-}
-/*=========================================
-RENDER PRODUCT
-=========================================*/
-
-function renderProduct(product){
-
-    productCategory.textContent=product.category;
-
-    productTitle.textContent=product.name;
-
-    currentPrice.textContent=formatPrice(product.price);
-
-    oldPrice.textContent=formatPrice(product.oldPrice);
-
-    reviews.textContent=`(${product.reviews} Reviews)`;
-
-    description.textContent=product.description;
-
-    stock.textContent=product.stock>0?"In Stock":"Out of Stock";
-
-    mainImage.src=product.image;
-
-    createGallery(product.gallery);
-
-    createSizes(product.sizes);
-
 }
 
+/**
+ * 5. Limits quantity changes to valid boundaries (1 to 10)
+ */
+function setupQuantityCounters() {
+    const btnMinus = document.querySelector('.qty-minus') || document.getElementById('qtyMinus');
+    const btnPlus = document.querySelector('.qty-plus') || document.getElementById('qtyPlus');
+    const inputQty = document.querySelector('.qty-input') || document.getElementById('qtyInput');
 
-/*=========================================
-GALLERY
-=========================================*/
+    if (!btnMinus || !btnPlus || !inputQty) return;
 
-function createGallery(images){
-
-    thumbnails.innerHTML="";
-
-    images.forEach((image,index)=>{
-
-        thumbnails.innerHTML+=`
-        <img
-            class="thumbnail ${index===0?"active":""}"
-            src="${image}"
-            alt="Product Image">
-        `;
-
+    btnMinus.addEventListener('click', () => {
+        let currentVal = parseInt(inputQty.value) || 1;
+        if (currentVal > 1) {
+            inputQty.value = currentVal - 1;
+        }
     });
 
-    document.querySelectorAll(".thumbnail").forEach(item=>{
+    btnPlus.addEventListener('click', () => {
+        let currentVal = parseInt(inputQty.value) || 1;
+        if (currentVal < 10) { // Limit individual items to 10 max per purchase
+            inputQty.value = currentVal + 1;
+        } else {
+            window.showToast("Maximum ordering quantity is 10 units.", "error");
+        }
+    });
+}
 
-        item.addEventListener("click",()=>{
+/**
+ * 6. Sets up listeners for add-to-cart and wishlist button configurations
+ */
+function setupSubmissionButtons() {
+    const btnAddToCart = document.getElementById('addToCartBtn') || document.querySelector('.add-to-cart-btn');
+    const btnAddToWishlist = document.getElementById('addToWishlistBtn') || document.querySelector('.add-to-wishlist-btn');
 
-            document.querySelectorAll(".thumbnail").forEach(img=>img.classList.remove("active"));
+    if (btnAddToCart) {
+        btnAddToCart.addEventListener('click', () => {
+            if (!currentProduct) return;
 
-            item.classList.add("active");
+            const inputQty = document.querySelector('.qty-input') || document.getElementById('qtyInput');
+            const qtyToAdd = inputQty ? parseInt(inputQty.value) || 1 : 1;
 
-            mainImage.src=item.src;
+            let cart = JSON.parse(localStorage.getItem(window.CART_KEY)) || [];
 
+            // Check if product already exists in cart with this exact size
+            const existingIndex = cart.findIndex(item => item.name === currentProduct.name && item.size === selectedSize);
+
+            if (existingIndex !== -1) {
+                cart[existingIndex].quantity = (parseInt(cart[existingIndex].quantity) || 0) + qtyToAdd;
+            } else {
+                cart.push({
+                    name: currentProduct.name,
+                    price: selectedPrice,
+                    image: currentProduct.image,
+                    size: selectedSize,
+                    quantity: qtyToAdd
+                });
+            }
+
+            localStorage.setItem(window.CART_KEY, JSON.stringify(cart));
+            
+            // Instantly update badge counters across navbar
+            window.dispatchEvent(new CustomEvent('cartUpdated'));
+            window.showToast(`${qtyToAdd} x ${currentProduct.name} (${selectedSize}) added to cart.`);
         });
+    }
 
-    });
+    if (btnAddToWishlist) {
+        btnAddToWishlist.addEventListener('click', () => {
+            if (!currentProduct) return;
 
-}
-/*=========================================
-SIZES
-=========================================*/
-function createSizes(sizes){
+            let wishlist = JSON.parse(localStorage.getItem(window.WISHLIST_KEY)) || [];
 
-    const title = sizeContainer.querySelector("h4");
+            // Prevent duplicating identical name items
+            const alreadySaved = wishlist.some(item => item.name === currentProduct.name);
 
-    sizeContainer.innerHTML = "";
-    sizeContainer.appendChild(title);
-    sizes.forEach((size,index)=>{
+            if (alreadySaved) {
+                window.showToast(`${currentProduct.name} is already in your wishlist!`, 'error');
+                return;
+            }
 
-        sizeContainer.innerHTML += `
-            <button class="size-btn ${index===0 ? "active" : ""}">
-                ${size}
-            </button>
-        `;
+            wishlist.push({
+                name: currentProduct.name,
+                price: selectedPrice,
+                image: currentProduct.image,
+                size: selectedSize
+            });
 
-    });
-
-    const buttons = document.querySelectorAll(".size-btn");
-
-    buttons.forEach(button=>{
-
-        button.addEventListener("click",()=>{
-            buttons.forEach(btn=>btn.classList.remove("active"));
-            button.classList.add("active");
-
+            localStorage.setItem(window.WISHLIST_KEY, JSON.stringify(wishlist));
+            
+            // Update wishlist hearts
+            window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+            window.showToast(`${currentProduct.name} saved to wishlist.`);
         });
-
-    });
-
+    }
 }
-/*=========================================
-RELATED PRODUCTS
-=========================================*/
 
-function renderRelatedProducts(products,currentProduct){
+/**
+ * 7. Tab toggles (Description, Fragrance Notes, and Reviews tabs)
+ */
+function setupTabControls() {
+    const tabs = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
 
-    const container=document.getElementById("relatedProducts");
+    if (!tabs.length || !tabPanels.length) return;
 
-    if(!container) return;
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetId = tab.getAttribute('data-tab');
 
-    const related=products
-        .filter(product=>
-            product.category===currentProduct.category &&
-            product.id!==currentProduct.id
-        )
-        .slice(0,4);
+            // Set clicked tab active, clear out others
+            tabs.forEach(t => t.classList.remove('active'));
+            tabPanels.forEach(p => p.classList.remove('active'));
 
-    container.innerHTML="";
-
-    related.forEach(product=>{
-
-        container.innerHTML+=`
-        <article class="related-card">
-
-            <img src="${product.image}" alt="${product.name}">
-
-            <div class="related-info">
-
-                <span>${product.category}</span>
-
-                <h3>${product.name}</h3>
-
-                <p>${formatPrice(product.price)}</p>
-
-                <a href="product.html?id=${product.id}" class="view-product">
-                    View Product
-                </a>
-
-            </div>
-
-        </article>
-        `;
-
+            tab.classList.add('active');
+            
+            const activePanel = document.getElementById(targetId);
+            if (activePanel) {
+                activePanel.classList.add('active');
+            }
+        });
     });
-
 }

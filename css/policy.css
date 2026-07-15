@@ -1,0 +1,69 @@
+/*=========================================
+404
+=========================================*/
+
+.error-page{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:100px 0;
+background:#f8f8f8;
+}
+
+.error-content{
+text-align:center;
+}
+
+.error-content h1{
+font-size:180px;
+font-weight:700;
+line-height:1;
+color:#111;
+}
+
+.error-content h2{
+font-size:42px;
+margin:20px 0;
+}
+
+.error-content p{
+max-width:500px;
+margin:auto;
+margin-bottom:40px;
+line-height:1.8;
+}
+
+.error-actions{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.primary-btn{
+padding:15px 35px;
+background:#111;
+color:#fff;
+text-decoration:none;
+border-radius:8px;
+transition:.3s;
+}
+
+.primary-btn:hover{
+background:#222;
+}
+
+.secondary-btn{
+padding:15px 35px;
+border:1px solid #111;
+color:#111;
+text-decoration:none;
+border-radius:8px;
+transition:.3s;
+}
+
+.secondary-btn:hover{
+background:#111;
+color:#fff;
+}

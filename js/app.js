@@ -1,209 +1,194 @@
-/*=========================================
-GLOBAL ELEMENTS
-=========================================*/
+/**
+ * AROFRAG - Global Application Controller
+ * Handles global header updates, badge counts, and user authentication states.
+ */
 
-const header=document.querySelector("header");
-const menuToggle=document.querySelector(".menu-toggle");
-const navMenu=document.querySelector(".nav-menu");
-const navLinks=document.querySelectorAll(".nav-menu a");
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Initialize global UI updates
+    updateGlobalBadges();
+    initUserSessionUI();
 
-const searchBtn=document.querySelector(".search-btn");
-const searchModal=document.querySelector(".search-modal");
-const closeSearch=document.querySelector(".close-search");
-const searchInput=document.querySelector(".search-input");
-const searchResults=document.querySelector(".search-results");
-const wishlistBtn=document.querySelector(".wishlist-btn");
-const cartBadge=document.querySelector(".cart span");
-
-/*=========================================
-INITIALIZE
-=========================================*/
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-    updateCartCount();
-    initializeNavbar();
-    initializeSearch();
-    initializeWishlist();
-
-});
-
-/*=========================================
-NAVBAR
-=========================================*/
-
-function initializeNavbar(){
-    if(menuToggle){
-        menuToggle.addEventListener("click",()=>{
-            navMenu.classList.toggle("active");
-        });
-
-    }
-
-    navLinks.forEach(link=>{
-
-        link.addEventListener("click",()=>{
-
-            navMenu.classList.remove("active");
-        });
+    // 2. Setup dynamic event listeners for cross-script communication
+    window.addEventListener('cartUpdated', () => {
+        updateGlobalBadges();
     });
 
-}
+    window.addEventListener('wishlistUpdated', () => {
+        updateGlobalBadges();
+    });
 
-/*=========================================
-STICKY NAVBAR
-=========================================*/
-
-window.addEventListener("scroll",()=>{
-    if(window.scrollY>80){
-        header.classList.add("sticky");
-    }else{
-        header.classList.remove("sticky");
-    }
-
+    // 3. Listen for local storage changes across browser tabs/windows
+    window.addEventListener('storage', (e) => {
+        if (e.key === window.CART_KEY || e.key === window.WISHLIST_KEY) {
+            updateGlobalBadges();
+        }
+        if (e.key === window.USER_KEY) {
+            initUserSessionUI();
+        }
+    });
 });
-/*=========================================
-SEARCH MODAL
-=========================================*/
 
-function initializeSearch(){
-
-    if(searchBtn&&searchModal){
-
-        searchBtn.addEventListener("click",()=>{
-            searchModal.classList.add("show");
-            if(searchInput){
-                searchInput.focus();
-
+/**
+ * Updates cart and wishlist counters dynamically across the entire document
+ */
+function updateGlobalBadges() {
+    // A. Cart Counter Calculations
+    const cart = JSON.parse(localStorage.getItem(window.CART_KEY)) || [];
+    const totalCartItems = cart.reduce((acc, item) => acc + (parseInt(item.quantity) || 0), 0);
+    
+    // Find shopping bags (using icon parents or classes)
+    const cartIcons = document.querySelectorAll('a[href="cart.html"]');
+    cartIcons.forEach(icon => {
+        // Find existing badge, or create one
+        let badge = icon.querySelector('.cart-badge');
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'cart-badge';
+            badge.style.cssText = `
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                background: #111;
+                color: #fff;
+                font-size: 0.7rem;
+                font-weight: 600;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Poppins', sans-serif;
+            `;
+            // Ensure parent has relative positioning for badge placement
+            if (window.getComputedStyle(icon).position === 'static') {
+                icon.style.position = 'relative';
             }
-        });
-    }
+            icon.appendChild(badge);
+        }
+        
+        badge.textContent = totalCartItems;
+        badge.style.display = totalCartItems > 0 ? 'flex' : 'none';
+    });
 
-    if(closeSearch){
+    // B. Wishlist Counter Calculations
+    const wishlist = JSON.parse(localStorage.getItem(window.WISHLIST_KEY)) || [];
+    const totalWishlistItems = wishlist.length;
 
-        closeSearch.addEventListener("click",()=>{
-            searchModal.classList.remove("show");
-        });
-    }
-
-    if(searchModal){
-        searchModal.addEventListener("click",(event)=>{
-            if(event.target===searchModal){
-                searchModal.classList.remove("show");
+    // Find wishlist links (matches regular heart icons)
+    const wishlistIcons = document.querySelectorAll('a[href*="wishlist.html"], a[title="wishlist"]');
+    wishlistIcons.forEach(icon => {
+        let badge = icon.querySelector('.wishlist-badge');
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'wishlist-badge';
+            badge.style.cssText = `
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                background: #ef4444;
+                color: #fff;
+                font-size: 0.7rem;
+                font-weight: 600;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Poppins', sans-serif;
+            `;
+            if (window.getComputedStyle(icon).position === 'static') {
+                icon.style.position = 'relative';
             }
-        });
-    }
-
-}
-
-/*=========================================
-LIVE SEARCH
-=========================================*/
-
-if(searchInput){
-
-    searchInput.addEventListener("input",async()=>{
-
-        const keyword=searchInput.value.trim().toLowerCase();
-        if(keyword===""){
-            searchResults.innerHTML="";
-            return;
-
+            icon.appendChild(badge);
         }
 
-        const products=await getProducts();
-        const filtered=products.filter(product=>
-            product.name.toLowerCase().includes(keyword) ||
-            product.category.toLowerCase().includes(keyword)
-        );
-        renderSearchResults(filtered);
-
+        badge.textContent = totalWishlistItems;
+        badge.style.display = totalWishlistItems > 0 ? 'flex' : 'none';
     });
-
 }
-/*=========================================
-SEARCH RESULTS
-=========================================*/
 
-function renderSearchResults(products){
+/**
+ * Initializes and dynamically displays user profile status in the header
+ */
+function initUserSessionUI() {
+    const userElement = document.querySelector('a[href="login.html"]');
+    if (!userElement) return;
 
-    if(!searchResults) return;
-    searchResults.innerHTML="";
-    if(products.length===0){
-        searchResults.innerHTML="<p>No products found.</p>";
-        return;
-    }
+    const loggedInUser = JSON.parse(localStorage.getItem(window.USER_KEY));
 
-    products.forEach(product=>{
-        searchResults.innerHTML+=`
-
-        <a href="product.html?id=${product.id}" class="search-item">
-            <img src="${product.image}" alt="${product.name}">
-
-            <div>
-                <h4>${product.name}</h4>
-                <p>${formatPrice(product.price)}</p>
+    if (loggedInUser && loggedInUser.fullName) {
+        // Create an elegant dropdown structure instead of a hardcoded login link
+        const initials = loggedInUser.fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        
+        userElement.href = '#';
+        userElement.innerHTML = `
+            <div class="user-avatar-container" style="position: relative; display: inline-block; cursor: pointer;">
+                <span class="user-avatar" style="
+                    display: inline-flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    width: 28px; 
+                    height: 28px; 
+                    background: #111; 
+                    color: #fff; 
+                    border-radius: 50%; 
+                    font-size: 0.75rem; 
+                    font-weight: 600; 
+                    letter-spacing: 0.5px;
+                ">${initials}</span>
+                
+                <div class="user-dropdown" style="
+                    display: none;
+                    position: absolute;
+                    right: 0;
+                    top: 130%;
+                    background: #fff;
+                    border: 1px solid #eee;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                    min-width: 160px;
+                    z-index: 999;
+                    font-family: 'Poppins', sans-serif;
+                    text-align: left;
+                ">
+                    <div style="padding: 10px 15px; border-bottom: 1px solid #f5f5f5; font-size: 0.8rem; color: #888;">
+                        Hello, <strong style="color: #111; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${loggedInUser.fullName}</strong>
+                    </div>
+                    <a href="wishlist.html" style="display: block; padding: 10px 15px; color: #333; text-decoration: none; font-size: 0.85rem; border-bottom: 1px solid #f5f5f5;">My Wishlist</a>
+                    <a href="#" id="btnLogout" style="display: block; padding: 10px 15px; color: #e11d48; text-decoration: none; font-size: 0.85rem; font-weight: 500;">Logout</a>
+                </div>
             </div>
-        </a>
         `;
-    });
 
-}
-/*=========================================
-WISHLIST
-=========================================*/
+        // Toggle user menu dropdown
+        const container = userElement.querySelector('.user-avatar-container');
+        const dropdown = userElement.querySelector('.user-dropdown');
+        
+        container.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
 
-function initializeWishlist(){
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            dropdown.style.display = 'none';
+        });
 
-    if(!wishlistBtn) return;
-    updateWishlistIcon();
-
-    wishlistBtn.addEventListener("click",()=>{
-        let wishlist=getWishlist();
-        if(wishlist.includes("navbar")){
-            wishlist=wishlist.filter(item=>item!=="navbar");
-            showToast("Wishlist cleared.");
-
-        }else{
-            wishlist.push("navbar");
-            showToast("Wishlist saved.");
-        }
-        saveWishlist(wishlist);
-        updateWishlistIcon();
-    });
-}
-
-/*=========================================
-UPDATE WISHLIST ICON
-=========================================*/
-function updateWishlistIcon(){
-    if(!wishlistBtn) return;
-    const wishlist=getWishlist();
-    if(wishlist.includes("navbar")){
-        wishlistBtn.classList.add("active");
-    }else{
-        wishlistBtn.classList.remove("active");
+        // Handle logout process
+        const btnLogout = userElement.querySelector('#btnLogout');
+        btnLogout.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem(window.USER_KEY);
+            window.showToast('Logged out successfully.');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        });
+    } else {
+        // Keep the original default state (User Icon) if guest
+        userElement.href = 'login.html';
+        userElement.innerHTML = `<i class="fa-regular fa-user"></i>`;
     }
 }
-/*=========================================
-ACTIVE NAVIGATION
-=========================================*/
-
-const currentPage=window.location.pathname.split("/").pop()||"index.html";
-navLinks.forEach(link=>{
-    const href=link.getAttribute("href");
-    if(href===currentPage){
-        link.classList.add("active");
-    }else{
-        link.classList.remove("active");
-    }
-});
-/*=========================================
-ESC KEY
-=========================================*/
-document.addEventListener("keydown",(event)=>{
-    if(event.key==="Escape"){
-        searchModal?.classList.remove("show");
-    }
-
-});
