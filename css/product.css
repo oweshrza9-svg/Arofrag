@@ -295,3 +295,281 @@ height:52px;
 }
 
 }
+/*=========================================
+PRODUCT TABS
+=========================================*/
+
+.product-tabs{
+display:flex;
+gap:15px;
+margin:60px 0 30px;
+border-bottom:1px solid #e5e5e5;
+}
+
+.tab-btn{
+padding:12px 24px;
+background:none;
+border:none;
+border-bottom:3px solid transparent;
+font-size:15px;
+font-weight:500;
+cursor:pointer;
+transition:.3s;
+}
+
+.tab-btn.active{
+color:#c9a14a;
+border-color:#c9a14a;
+}
+
+.tab-content{
+display:none;
+padding:30px 0;
+line-height:1.8;
+}
+
+.tab-content.active{
+display:block;
+}
+
+.notes-list{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:25px;
+margin-top:20px;
+}
+
+.note-card{
+padding:20px;
+background:#f8f8f8;
+border-radius:10px;
+}
+
+.note-card h4{
+margin-bottom:10px;
+}
+
+.review-card{
+padding:25px;
+margin-top:20px;
+border:1px solid #e5e5e5;
+border-radius:10px;
+}
+
+.review-stars{
+color:#d4af37;
+margin-bottom:10px;
+}
+
+/*=========================================
+RELATED PRODUCTS
+=========================================*/
+
+.related-section{
+padding:80px 0;
+}
+
+.related-title{
+text-align:center;
+margin-bottom:40px;
+}
+
+.related-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:30px;
+}
+
+.related-card{
+background:#fff;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+transition:.3s;
+}
+
+.related-card:hover{
+transform:translateY(-5px);
+}
+
+.related-card img{
+width:100%;
+height:280px;
+object-fit:cover;
+display:block;
+}
+
+.related-info{
+padding:20px;
+}
+
+.related-info h3{
+margin-bottom:10px;
+font-size:20px;
+}
+
+.related-info p{
+margin-bottom:15px;
+color:#666;
+}
+
+.related-info a{
+display:inline-block;
+padding:10px 20px;
+background:#111;
+color:#fff;
+text-decoration:none;
+border-radius:6px;
+}
+.description-section{
+    padding:80px 0;
+}
+
+.tab-buttons{
+    display:flex;
+    gap:15px;
+    margin-bottom:35px;
+    border-bottom:1px solid #e5e5e5;
+}
+
+.tab-btn{
+    padding:12px 24px;
+    background:none;
+    border:none;
+    border-bottom:3px solid transparent;
+    font-size:15px;
+    font-weight:500;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.tab-btn.active{
+    color:#c89b3c;
+    border-color:#c89b3c;
+}
+
+.tab-panel{
+    display:none;
+}
+
+.tab-panel.active{
+    display:block;
+}
+
+.description-text{
+    font-size:16px;
+    line-height:1.9;
+    color:#555;
+}
+
+.notes-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+}
+
+.note-card{
+    padding:25px;
+    background:#fafafa;
+    border-radius:12px;
+    border:1px solid #eee;
+}
+
+.note-card h4{
+    margin-bottom:10px;
+}
+
+.review-card{
+    padding:25px;
+    border:1px solid #eee;
+    border-radius:12px;
+    background:#fff;
+}
+
+.related-section{
+    padding:90px 0;
+}
+
+.section-header{
+    text-align:center;
+    margin-bottom:50px;
+}
+
+.section-header span{
+    color:#c89b3c;
+    letter-spacing:2px;
+    font-size:14px;
+    font-weight:600;
+}
+
+.section-header h2{
+    margin:12px 0;
+    font-size:38px;
+}
+
+.section-header p{
+    color:#666;
+}
+
+.related-products{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:30px;
+}
+
+.related-card{
+    background:#fff;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.related-card:hover{
+    transform:translateY(-6px);
+}
+
+.related-card img{
+    width:100%;
+    height:280px;
+    object-fit:cover;
+    display:block;
+}
+
+.related-info{
+    padding:20px;
+}
+
+.related-info span{
+    color:#c89b3c;
+    font-size:13px;
+    font-weight:600;
+}
+
+.related-info h3{
+    margin:10px 0;
+    font-size:22px;
+}
+
+.related-info p{
+    margin-bottom:18px;
+    font-size:18px;
+    font-weight:600;
+}
+
+.view-product{
+    display:inline-block;
+    width:100%;
+    padding:12px;
+    background:#111;
+    color:#fff;
+    text-align:center;
+    text-decoration:none;
+    border-radius:8px;
+    transition:.3s;
+}
+
+.view-product:hover{
+    background:#c89b3c;
+    color:#111;
+}
