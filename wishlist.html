@@ -1,30 +1,137 @@
-<main>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist | AROFRAG</title>
 
-<section class="wishlist-hero">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<div class="container">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-<h1>My Wishlist</h1>
+    <!-- Shared Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/wishlist.css">
+</head>
+<body>
 
-<p>Your favourite fragrances in one place.</p>
+    <!-- ========================= -->
+    <!-- NAVBAR -->
+    <!-- ========================= -->
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">
+                <img src="assets/arologopng.png" alt="AROFRAG Logo">
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Collection</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-icons">
+                <button class="icon-btn search-btn" aria-label="Search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button class="icon-btn wishlist-btn active" aria-label="Wishlist">
+                    <i class="fa-solid fa-heart"></i>
+                </button>
+                <a href="login.html" class="icon-btn" aria-label="Account">
+                    <i class="fa-regular fa-user"></i>
+                </a>
+                <a href="cart.html" class="cart" aria-label="Cart">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </nav>
+    </header>
 
-</div>
+    <!-- ========================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================= -->
+    <main>
+        <section class="wishlist-hero">
+            <div class="container">
+                <h1>My Wishlist</h1>
+                <p>Your favourite fragrances in one place.</p>
+            </div>
+        </section>
 
-</section>
+        <section class="wishlist-section">
+            <div class="container">
+                <div id="wishlistContainer" class="wishlist-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 40px;">
+                    <!-- Injected dynamically by wishlist.js -->
+                </div>
+            </div>
+        </section>
+    </main>
 
-<section class="wishlist-section">
+    <!-- ========================= -->
+    <!-- FOOTER -->
+    <!-- ========================= -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <img src="assets/arologopng.png" alt="AROFRAG Logo" class="footer-logo, img-radius-round">
+                <p>
+                    Premium handcrafted alcohol-free attars inspired by
+                    centuries of Indian perfumery. Crafted with tradition,
+                    designed for modern elegance.
+                </p>
+                <div class="social-links">
+                    <a href="#" title="none"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" title="none"><i class="fab fa-instagram"></i></a>
+                    <a href="#" title="none"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" title="none"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="shop.html">Collection</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Customer Support</h3>
+                <ul>
+                    <li><a href="faq.html">FAQs</a></li>
+                    <li><a href="shipping.html">Shipping</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Newsletter</h3>
+                <p>
+                    Subscribe to receive updates about new fragrances,
+                    exclusive offers and seasonal collections.
+                </p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Enter your email" name="email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 AROFRAG. All Rights Reserved.</p>
+        </div>
+    </footer>
 
-<div class="container">
-
-<div id="wishlistContainer" class="wishlist-grid">
-
-</div>
-
-</div>
-
-</section>
-
-</main>
-<script src="js/util.js"></script>
-<script src="js/wishlist.js"></script>
-<script src="js/app.js"></script>
+    <!-- Scripts -->
+    <script src="js/util.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/wishlist.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
