@@ -33,14 +33,16 @@ function showToast(message, type = 'success') {
 }
 
 function addToCart(product, size, quantity = 1) {
-    let cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
-    const existingIndex = cart.findIndex(item => item.id === product.id && item.size === size);
+    const cartKey = window.CART_KEY || CART_KEY;
+    let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+    const productId = String(product._id || product.id);
+    const existingIndex = cart.findIndex(item => String(item.id) === productId && item.size === size);
     
     if (existingIndex > -1) {
         cart[existingIndex].quantity += quantity;
     } else {
         cart.push({
-            id: product.id,
+            id: productId,
             name: product.name,
             price: product.price,
             image: product.image || (product.images ? product.images[0] : 'assets/placeholder.png'),
@@ -49,7 +51,7 @@ function addToCart(product, size, quantity = 1) {
         });
     }
     
-    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    localStorage.setItem(cartKey, JSON.stringify(cart));
     updateCartBadge();
     showToast(`${product.name} (${size}) added to cart!`);
 }
@@ -106,20 +108,8 @@ function renderSignatureCollection(products) {
 
 // ... keep existing selectHomeSize ...
 
-window.handleHomeAddToCart = function(productId) {
-    fetch("/api/products")  // Updated for production consistency
-        .then(res => res.json())
-        .then(data => {
-            const products = data.products || data;
-            const product = products.find(p => p.id == productId);
-            if (!product) return;
-            const card = document.querySelector(`.product-card[data-id="${productId}"]`);
-            const activeSizeChip = card ? card.querySelector('.size-chip.active') || card.querySelector('.size-chip') : null;
-            const size = activeSizeChip ? activeSizeChip.textContent.trim() : product.sizes[0];
-            addToCart(product, size, 1);  // Reuses existing util function
-        })
-        .catch(err => console.error(err));
-};
+
+
 
 // Handler for size chip selection
 window.selectHomeSize = function(element) {
@@ -130,19 +120,26 @@ window.selectHomeSize = function(element) {
     element.classList.add('active');
 };
 
+
 // Handler for homepage Add to Cart
 window.handleHomeAddToCart = function(productId) {
-  fetch("http://localhost:5000/api/products")
-        .then(res => res.json())
-        .then(data=>{
+    function doAddToCart(products) {
+        const product = products.find(p => String(p._id || p.id) === String(productId));
+        if (!product) return;
+        const card = document.querySelector(`.product-card[data-id="${productId}"]`);
+        const activeSizeChip = card ? card.querySelector('.size-chip.active') || card.querySelector('.size-chip') : null;
+        const size = activeSizeChip ? activeSizeChip.textContent.trim() : (product.sizes ? product.sizes[0] : '6ml');
+        addToCart(product, size, 1);
+    }
 
-            const products=data.products;
-            const product = products.find(p => p.id == productId);
-            const card = document.querySelector(`.product-card[data-id="${productId}"]`);
-            const activeSizeChip = card.querySelector('.size-chip.active') || card.querySelector('.size-chip');
-            const size = activeSizeChip ? activeSizeChip.textContent.trim() : product.sizes[0];
-            
-            addToCart(product, size, 1);
+    fetch("http://localhost:5000/api/products")
+        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+        .then(data => doAddToCart(data.products || data))
+        .catch(() => {
+            fetch("json/products.json")
+                .then(res => res.json())
+                .then(data => doAddToCart(Array.isArray(data) ? data : (data.products || data)))
+                .catch(() => {});
         });
 };
 

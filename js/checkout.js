@@ -44,6 +44,7 @@ function renderCheckout() {
     if (!container) return;
 
     const cart = getCart();
+    console.log("Checkout Cart:", cart);
 
     if (cart.length === 0) {
 
@@ -134,44 +135,24 @@ function renderCheckout() {
     updateCheckoutSummary(cart);
 
 }
-
 function updateCheckoutSummary(cart){
 
-    const subtotal = cart.reduce((sum,item)=>{
+    const subtotal = calculateSubtotal(cart);
 
-        return sum +
+    const shipping = calculateShipping(cart);
 
-        (
-            window.cleanPrice(item.price) *
-            (parseInt(item.quantity)||1)
-        );
-
-    },0);
-
-    const shipping =
-        subtotal >= FREE_SHIPPING_THRESHOLD
-            ? 0
-            : SHIPPING_CHARGE;
-
-    const total = subtotal + shipping;
+    const total = calculateTotal(cart);
 
     document.getElementById("checkoutSubtotal").textContent =
         window.formatCurrency(subtotal);
 
-    document.getElementById("checkoutTotal").textContent =
-        window.formatCurrency(total);
-
-    const shippingRow =
-        document.querySelectorAll(".summary-row span")[3];
-
-    if(shippingRow){
-
-        shippingRow.textContent =
-            shipping===0
+    document.getElementById("checkoutShipping").textContent =
+        shipping === 0
             ? "FREE"
             : window.formatCurrency(shipping);
 
-    }
+    document.getElementById("checkoutTotal").textContent =
+        window.formatCurrency(total);
 
 }
 
@@ -226,7 +207,7 @@ function bindCheckoutEvents(){
 
 // ==========================================
 // AROFRAG Checkout
-
+// Part 2 - Validation & Order Flow
 // ==========================================
 
 async function handleCheckoutSubmit(e){
@@ -246,23 +227,31 @@ async function handleCheckoutSubmit(e){
 
     }
 
-    const orderData = {
+    const customer={
 
-        customer:{
+        name:document.getElementById("name").value.trim(),
 
-            name:document.getElementById("name").value.trim(),
+        email:document.getElementById("email").value.trim(),
 
-            email:document.getElementById("email").value.trim(),
+        phone:document.getElementById("phone").value.trim(),
 
-            phone:document.getElementById("phone").value.trim(),
+        address:document.getElementById("address").value.trim(),
 
-            address:document.getElementById("address").value.trim(),
+        city:document.getElementById("city").value.trim(),
 
-            city:document.getElementById("city").value.trim(),
+        pincode:document.getElementById("pincode").value.trim()
 
-            pincode:document.getElementById("pincode").value.trim()
+    };
 
-        },
+    if(!validateOrder(customer)){
+
+        return;
+
+    }
+
+    const orderData={
+
+        customer,
 
         paymentMethod:
 
@@ -282,89 +271,25 @@ async function handleCheckoutSubmit(e){
 
     };
 
-    if(!validateOrder(orderData.customer)){
+    const submitBtn=
 
-        return;
+        document.querySelector(
+            ".place-order-btn"
+        );
 
-    }
+    const originalText=
 
-    const submitBtn =
-        document.querySelector(".place-order-btn");
-
-    const originalText =
         submitBtn.textContent;
 
     submitBtn.disabled=true;
 
-    submitBtn.textContent="Placing Order...";
+    submitBtn.textContent=
+
+        "Placing Order...";
 
     try{
 
-        const response=await fetch(
-
-            "http://localhost:5000/api/orders",
-
-            {
-
-                method:"POST",
-
-                headers:{
-
-                    "Content-Type":"application/json"
-
-                },
-
-                body:JSON.stringify(orderData)
-
-            }
-
-        );
-
-        if(!response.ok){
-
-            throw new Error("Order failed");
-
-        }
-
-        const result=await response.json();
-
-        localStorage.removeItem(window.CART_KEY);
-
-        window.dispatchEvent(
-
-            new CustomEvent("cartUpdated")
-
-        );
-
-        window.showToast(
-
-            "Order placed successfully!"
-
-        );
-
-        setTimeout(()=>{
-
-            window.location.href=
-
-            "thankyou.html?id="+
-
-            result.order._id;
-
-        },1200);
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        window.showToast(
-
-            "Unable to place order.",
-
-            "error"
-
-        );
+        await placeOrder(orderData);
 
     }
 
@@ -372,7 +297,9 @@ async function handleCheckoutSubmit(e){
 
         submitBtn.disabled=false;
 
-        submitBtn.textContent=originalText;
+        submitBtn.textContent=
+
+            originalText;
 
     }
 
@@ -402,7 +329,7 @@ function validateOrder(customer){
 
         window.showToast(
 
-            "Invalid email.",
+            "Invalid email address.",
 
             "error"
 
@@ -412,7 +339,9 @@ function validateOrder(customer){
 
     }
 
-    const phoneRegex=/^[6-9]\d{9}$/;
+    const phoneRegex=
+
+    /^[6-9]\d{9}$/;
 
     if(!phoneRegex.test(customer.phone)){
 
@@ -446,7 +375,7 @@ function validateOrder(customer){
 
         window.showToast(
 
-            "Enter city.",
+            "Enter your city.",
 
             "error"
 
@@ -502,9 +431,8 @@ function calculateShipping(cart){
 
     return subtotal>=FREE_SHIPPING_THRESHOLD
 
-    ?0
-
-    :SHIPPING_CHARGE;
+        ?0
+        :SHIPPING_CHARGE;
 
 }
 
@@ -515,5 +443,386 @@ function calculateTotal(cart){
     +
 
     calculateShipping(cart);
+
+}
+// ==========================================
+// AROFRAG Checkout
+
+// ==========================================
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+    autoFillUser();
+
+    toggleCheckoutState();
+
+});
+
+function autoFillUser(){
+
+    const user=
+
+        JSON.parse(
+
+            localStorage.getItem("user")
+
+        );
+
+    if(!user) return;
+
+    if(document.getElementById("name"))
+        document.getElementById("name").value=
+        user.fullName||"";
+
+    if(document.getElementById("email"))
+        document.getElementById("email").value=
+        user.email||"";
+
+    if(document.getElementById("phone"))
+        document.getElementById("phone").value=
+        user.phone||"";
+
+    if(document.getElementById("address"))
+        document.getElementById("address").value=
+        user.address||"";
+
+    if(document.getElementById("city"))
+        document.getElementById("city").value=
+        user.city||"";
+
+    if(document.getElementById("pincode"))
+        document.getElementById("pincode").value=
+        user.pincode||"";
+
+}
+
+function toggleCheckoutState(){
+
+    const cart=getCart();
+
+    const button=
+
+        document.querySelector(
+
+            ".place-order-btn"
+
+        );
+
+    if(!button) return;
+
+    if(cart.length===0){
+
+        button.disabled=true;
+
+        button.textContent=
+
+        "Cart Empty";
+
+    }else{
+
+        button.disabled=false;
+
+        button.textContent=
+
+        "Place Order";
+
+    }
+
+}
+
+window.addEventListener(
+
+    "cartUpdated",
+
+    ()=>{
+
+        toggleCheckoutState();
+
+    }
+
+);
+
+async function submitOrder(orderData){
+
+    const token=
+
+        localStorage.getItem("token");
+
+    const headers={
+
+        "Content-Type":"application/json"
+
+    };
+
+    if(token){
+
+        headers.Authorization=
+
+        `Bearer ${token}`;
+
+    }
+
+    const response=
+
+    await fetch(
+
+        "http://localhost:5000/api/orders",
+
+        {
+
+            method:"POST",
+
+            headers,
+
+            body:JSON.stringify(orderData)
+
+        }
+
+    );
+
+    const data=
+
+    await response.json();
+
+    if(!response.ok){
+
+        throw new Error(
+
+            data.message||
+
+            "Order Failed"
+
+        );
+
+    }
+
+    return data;
+
+}
+
+async function placeOrder(orderData){
+
+    try{
+
+        const data=
+
+        await submitOrder(orderData);
+
+        localStorage.removeItem(
+
+            window.CART_KEY
+
+        );
+
+        window.dispatchEvent(
+
+            new CustomEvent(
+
+                "cartUpdated"
+
+            )
+
+        );
+
+        renderCheckout();
+
+        window.showToast(
+
+            "Order placed successfully."
+
+        );
+
+        setTimeout(()=>{
+
+            if(
+
+                data.order&&
+
+                data.order._id
+
+            ){
+
+                window.location.href=
+
+                `thankyou.html?id=${data.order._id}`;
+
+            }else{
+
+                window.location.href=
+
+                "thankyou.html";
+
+            }
+
+        },1200);
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        window.showToast(
+
+            error.message,
+
+            "error"
+
+        );
+
+    }
+
+}
+
+document.addEventListener(
+
+    "change",
+
+    e=>{
+
+        if(
+
+            e.target.name!=="payment"
+
+        ) return;
+
+        switch(e.target.value){
+
+            case "cod":
+
+                window.showToast(
+
+                    "Cash on Delivery selected."
+
+                );
+
+            break;
+
+            case "upi":
+
+                window.showToast(
+
+                    "UPI payment selected."
+
+                );
+
+            break;
+
+            case "card":
+
+                window.showToast(
+
+                    "Card payment selected."
+
+                );
+
+            break;
+
+        }
+
+    }
+
+);
+
+window.addEventListener(
+
+    "beforeunload",
+
+    ()=>{
+
+        const button=
+
+        document.querySelector(
+
+            ".place-order-btn"
+
+        );
+
+        if(button){
+
+            button.disabled=false;
+
+            button.textContent=
+
+            "Place Order";
+
+        }
+
+    }
+
+);
+
+console.log(
+
+    "%cAROFRAG Checkout Ready",
+
+    "color:#b58e46;font-size:14px;font-weight:bold;"
+
+);
+function showOrderSuccess(){
+
+    const popup=document.createElement("div");
+
+    popup.innerHTML=`
+
+    <div style="
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.6);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        z-index:99999;
+    ">
+
+        <div style="
+            background:#fff;
+            padding:40px;
+            border-radius:18px;
+            width:360px;
+            text-align:center;
+            box-shadow:0 20px 60px rgba(0,0,0,.25);
+        ">
+
+            <div style="font-size:70px;">✅</div>
+
+            <h2 style="margin:15px 0;">
+                Order Placed
+            </h2>
+
+            <p>
+                Thank you for shopping with AROFRAG.
+            </p>
+
+            <button id="closeSuccessPopup"
+            style="
+                margin-top:20px;
+                padding:12px 30px;
+                border:none;
+                background:#111;
+                color:#fff;
+                cursor:pointer;
+                border-radius:8px;
+            ">
+                Continue
+            </button>
+
+        </div>
+
+    </div>
+
+    `;
+
+    document.body.appendChild(popup);
+
+    document
+        .getElementById("closeSuccessPopup")
+        .onclick=()=>{
+
+            popup.remove();
+
+            window.location.href="index.html";
+
+        };
 
 }

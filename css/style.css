@@ -302,82 +302,200 @@ pointer-events:none;
     grid-template-columns:repeat(4,1fr);
     gap:40px;
 }
+/* ===========================
+   PRODUCT CARD - PREMIUM LAYOUT
+=========================== */
 
-.product-card{
-    background:#111;
-    transition:.35s;
-    overflow:hidden;
-    position:relative;
+.product-card {
+    background: #111;
+    transition: 0.35s;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 580px;
 }
 
-.product-card:hover{
-    transform:translateY(-8px);
+.product-card:hover {
+    transform: translateY(-8px);
 }
 
-.product-image{
-    background:#fff;
-    overflow:hidden;
+.product-image {
+    background: #fff;
+    overflow: hidden;
+    flex-shrink: 0;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.product-image img{
-    width:100%;
-    aspect-ratio:1/1.2;
-    object-fit:cover;
-    transition:.4s;
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: 0.4s;
 }
 
-.product-card:hover img{
-    transform:scale(1.05);
+.product-card:hover img {
+    transform: scale(1.05);
 }
 
-.badge{
-    position:absolute;
-    top:15px;
-    left:15px;
-    background:#1E63FF;
-    color:#fff;
-    padding:6px 10px;
-    font-size:12px;
-    z-index:5;
+.badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: #1E63FF;
+    color: #fff;
+    padding: 6px 10px;
+    font-size: 12px;
+    z-index: 5;
 }
 
-.product-info{
-    padding:22px;
-    text-align:center;
+.product-info {
+    padding: 30px 20px 20px;
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
-.product-info h3{
-    color:#fff;
-    font-size:20px;
-    margin-bottom:12px;
-    font-family:'Cormorant Garamond',serif;
+.product-info h3 {
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 12px;
+    font-family: 'Cormorant Garamond', serif;
+    line-height: 1.4;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.price{
-    color:#C8A96A;
-    font-size:18px;
+.price {
+    color: #C8A96A;
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: 500;
 }
 
-.old-price{
-    color:#777;
-    text-decoration:line-through;
-    margin-right:8px;
+.old-price {
+    color: #777;
+    text-decoration: line-through;
+    margin-right: 8px;
 }
 
-@media(max-width:1100px){
-
-.product-grid{
-    grid-template-columns:repeat(2,1fr);
+.sizes-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
+.size-chip {
+    padding: 8px 14px;
+    border: 1px solid #333;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.25s;
+    font-size: 12px;
+    font-weight: 500;
 }
 
-@media(max-width:700px){
-
-.product-grid{
-    grid-template-columns:1fr;
+.size-chip:hover,
+.size-chip.active {
+    border-color: #C8A96A;
+    color: #C8A96A;
+    background: rgba(200, 169, 106, 0.1);
 }
 
+.actions {
+    display: flex;
+    gap: 0;
+    margin-top: auto;
+    width: 100%;
+}
+
+.details-btn,
+.add-to-cart-btn {
+    flex: 1;
+    padding: 14px 16px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.details-btn {
+    background: transparent;
+    border: 1px solid #C8A96A;
+    color: #C8A96A;
+}
+
+.details-btn:hover {
+    background: #C8A96A;
+    color: #111;
+}
+
+.add-to-cart-btn {
+    background: #C8A96A;
+    color: #111;
+    border: 1px solid #C8A96A;
+}
+
+.add-to-cart-btn:hover {
+    background: #fff;
+    color: #111;
+    border-color: #fff;
+}
+
+@media(max-width:1100px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+    
+    .product-card {
+        min-height: 560px;
+    }
+}
+
+@media(max-width:700px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    
+    .product-card {
+        min-height: 540px;
+    }
+    
+    .product-image {
+        height: 280px;
+    }
+    
+    .product-info h3 {
+        font-size: 16px;
+        min-height: 45px;
+    }
+    
+    .size-chip {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+    
+    .details-btn,
+    .add-to-cart-btn {
+        padding: 12px 14px;
+        font-size: 12px;
+    }
 }
 
 /*==========================

@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function loadProductDetails() {
     // Read parameters from URL (e.g. ?id=2)
     const urlParams = new URLSearchParams(window.location.search);
-const productId = urlParams.get("id");
+    const productId = urlParams.get("id");
     // If there is no ID parameter, redirect to the shop page
     if (!productId) {
         window.location.href = 'shop.html';
@@ -107,8 +107,8 @@ const productId = urlParams.get("id");
  * 2. Matches product details and renders them dynamically onto HTML IDs/Classes
  */
 function initializeProductPage(productsArray, targetId) {
-    // Find matching product
-const found = productsArray.find(item => String(item.id) === String(targetId));
+    // Find matching product - support both MongoDB _id and fallback id
+const found = productsArray.find(item => String(item._id || item.id) === String(targetId));
  if (!found) {
         // Product doesn't exist, go back to shop
         window.location.href = 'shop.html';
@@ -123,7 +123,7 @@ const found = productsArray.find(item => String(item.id) === String(targetId));
     const pPrice = document.querySelector('.product-price') || document.getElementById('productPrice');
     const pDesc = document.querySelector('.product-description') || document.getElementById('productDescription');
     const pCategory = document.querySelector('.product-category') || document.getElementById('productCategory');
-    const pMainImg = document.getElementById('mainProductImg') || document.querySelector('.main-img');
+    const pMainImg = document.getElementById('mainProductImage') || document.getElementById('mainProductImg') || document.querySelector('.main-img');
 
     if (pName) pName.textContent = currentProduct.name;
     if (pDesc) pDesc.textContent = currentProduct.description;
@@ -131,7 +131,9 @@ const found = productsArray.find(item => String(item.id) === String(targetId));
     if (pPrice) pPrice.textContent = window.formatCurrency(selectedPrice);
     
     if (pMainImg) {
-        pMainImg.src = currentProduct.image || 'assets/arologopng.png';
+        pMainImg.src = currentProduct.image && !currentProduct.image.includes('ADD') 
+       ? currentProduct.image 
+       : 'assets/arologopng.png';
         pMainImg.alt = currentProduct.name;
     }
 
@@ -162,39 +164,44 @@ function setupThumbnailGallery() {
         });
     });
 }
-
+ // mismatch
 /**
  * 4. Manages Bottle Size selection and adjusts prices proportionally
  */
 function setupSizeSelectors() {
-    // Handle either raw radio buttons or standard drop-down selectors
-    const sizeSelector = document.getElementById('sizeSelect') || document.querySelector('.size-selector');
+    // Handle size buttons (.size-btn) with click events
+    const sizeBtns = document.querySelectorAll('.size-btn');
     const pPrice = document.querySelector('.product-price') || document.getElementById('productPrice');
 
-    if (!sizeSelector) return;
+    if (!sizeBtns.length) return;
 
-    // Listen for dropdown changes
-    sizeSelector.addEventListener('change', (e) => {
-        selectedSize = e.target.value; // e.g. "3ml", "6ml", "12ml"
+    // Set initial selectedSize from the active button
+    const activeBtn = document.querySelector('.size-btn.active');
+    if (activeBtn) selectedSize = activeBtn.textContent.trim();
 
-        // Scale pricing proportional to the base 6ml attar price:
-        // - 3ml is half price (50%) plus a minor bottling overhead
-        // - 6ml is standard (100%)
-        // - 12ml gets a loyalty discount (180% instead of 200%)
-        const basePrice = currentProduct.price;
-        if (selectedSize === '3ml') {
-            selectedPrice = Math.round((basePrice * 0.5) + 50);
-        } else if (selectedSize === '12ml') {
-            selectedPrice = Math.round(basePrice * 1.8);
-        } else {
-            selectedSize = '6ml';
-            selectedPrice = basePrice;
-        }
+    sizeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove active class from all buttons
+            sizeBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
-        // Update the display price
-        if (pPrice) {
-            pPrice.textContent = window.formatCurrency(selectedPrice);
-        }
+            selectedSize = btn.textContent.trim(); // e.g. "3ml", "6ml", "12ml"
+
+            const basePrice = currentProduct.price;
+            if (selectedSize === '3ml') {
+                selectedPrice = Math.round((basePrice * 0.5) + 50);
+            } else if (selectedSize === '12ml') {
+                selectedPrice = Math.round(basePrice * 1.8);
+            } else {
+                selectedSize = '6ml';
+                selectedPrice = basePrice;
+            }
+
+            // Update the display price
+            if (pPrice) {
+                pPrice.textContent = window.formatCurrency(selectedPrice);
+            }
+        });
     });
 }
 
@@ -204,7 +211,7 @@ function setupSizeSelectors() {
 function setupQuantityCounters() {
     const btnMinus = document.querySelector('.qty-minus') || document.getElementById('qtyMinus');
     const btnPlus = document.querySelector('.qty-plus') || document.getElementById('qtyPlus');
-    const inputQty = document.querySelector('.qty-input') || document.getElementById('qtyInput');
+    const inputQty = document.getElementById('quantity') || document.querySelector('.qty-input') || document.getElementById('qtyInput');
 
     if (!btnMinus || !btnPlus || !inputQty) return;
 
@@ -249,6 +256,7 @@ function setupSubmissionButtons() {
                 cart[existingIndex].quantity = (parseInt(cart[existingIndex].quantity) || 0) + qtyToAdd;
             } else {
                 cart.push({
+                    id: String(currentProduct._id || currentProduct.id),
                     name: currentProduct.name,
                     price: selectedPrice,
                     image: currentProduct.image,
@@ -285,6 +293,7 @@ function setupSubmissionButtons() {
                 (parseInt(cart[existingIndex].quantity) || 0) + qtyToAdd;
         } else {
             cart.push({
+                id: String(currentProduct._id || currentProduct.id),
                 name: currentProduct.name,
                 price: selectedPrice,
                 image: currentProduct.image,
