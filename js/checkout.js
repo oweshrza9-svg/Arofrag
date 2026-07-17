@@ -146,16 +146,13 @@ function updateCheckoutSummary(cart){
 
     const total = calculateTotal(cart);
 
-    document.getElementById("checkoutSubtotal").textContent =
-        window.formatCurrency(subtotal);
+    const subtotalEl = document.getElementById("checkoutSubtotal");
+    const shippingEl = document.getElementById("checkoutShipping");
+    const totalEl = document.getElementById("checkoutTotal");
 
-    document.getElementById("checkoutShipping").textContent =
-        shipping === 0
-            ? "FREE"
-            : window.formatCurrency(shipping);
-
-    document.getElementById("checkoutTotal").textContent =
-        window.formatCurrency(total);
+    if (subtotalEl) subtotalEl.textContent = window.formatCurrency(subtotal);
+    if (shippingEl) shippingEl.textContent = shipping === 0 ? "FREE" : window.formatCurrency(shipping);
+    if (totalEl) totalEl.textContent = window.formatCurrency(total);
 
 }
 
@@ -199,12 +196,15 @@ window.removeCheckoutItem = function(index){
 
 function bindCheckoutEvents(){
 
+    if (checkoutEventsBound) return;
+
     const form =
         document.getElementById("checkoutForm");
 
     if(!form) return;
 
     form.addEventListener("submit",handleCheckoutSubmit);
+    checkoutEventsBound = true;
 
 }
 

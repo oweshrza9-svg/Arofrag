@@ -177,7 +177,19 @@ function setupSizeSelectors() {
 
     // Set initial selectedSize from the active button
     const activeBtn = document.querySelector('.size-btn.active');
-    if (activeBtn) selectedSize = activeBtn.textContent.trim();
+    if (activeBtn) {
+        selectedSize = activeBtn.textContent.trim();
+        if (selectedSize === '3ml') {
+            selectedPrice = Math.round((currentProduct.price * 0.5) + 50);
+        } else if (selectedSize === '12ml') {
+            selectedPrice = Math.round(currentProduct.price * 1.8);
+        } else {
+            selectedPrice = currentProduct.price;
+        }
+        if (pPrice) {
+            pPrice.textContent = window.formatCurrency(selectedPrice);
+        }
+    }
 
     sizeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
