@@ -73,8 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function loadProductDetails() {
     // Read parameters from URL (e.g. ?id=2)
     const urlParams = new URLSearchParams(window.location.search);
-    const productId = parseInt(urlParams.get('id'));
-
+const productId = urlParams.get("id");
     // If there is no ID parameter, redirect to the shop page
     if (!productId) {
         window.location.href = 'shop.html';
@@ -82,17 +81,26 @@ function loadProductDetails() {
     }
 
     // Try fetching from the server, fall back to list if offline
-    fetch('json/products.json')
-        .then(response => {
-            if (!response.ok) throw new Error("Offline fallbacks active.");
-            return response.json();
-        })
-        .then(data => {
-            initializeProductPage(data, productId);
-        })
-        .catch(() => {
-            initializeProductPage(fallbackProductsList, productId);
-        });
+   fetch("http://localhost:5000/api/products")
+    .then(response=>{
+
+        if(!response.ok) throw new Error();
+
+        return response.json();
+
+    })
+
+    .then(data=>{
+
+        initializeProductPage(data.products,productId);
+
+    })
+
+    .catch(()=>{
+
+        initializeProductPage(fallbackProductsList,productId);
+
+    });
 }
 
 /**
@@ -100,8 +108,7 @@ function loadProductDetails() {
  */
 function initializeProductPage(productsArray, targetId) {
     // Find matching product
-    const found = productsArray.find(item => item.id === targetId);
-
+    const found = productsArray.find(item=>item.id==targetId);    
     if (!found) {
         // Product doesn't exist, go back to shop
         window.location.href = 'shop.html';
@@ -134,7 +141,7 @@ function initializeProductPage(productsArray, targetId) {
     setupQuantityCounters();
     setupSubmissionButtons();
 }
-
+ 
 /**
  * 3. Handles click actions on secondary thumbnail images
  */
@@ -313,3 +320,4 @@ function setupTabControls() {
         });
     });
 }
+

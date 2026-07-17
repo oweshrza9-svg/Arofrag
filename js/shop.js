@@ -9,58 +9,6 @@ let filteredProducts = [];  // Will store products that pass active searches and
 let currentPage = 1;        // Current page number
 const itemsPerPage = 6;     // Show maximum 6 items per page for a clean layout
 
-// --- Fallback Products ---
-// This list ensures your shop works perfectly even if the JSON file cannot be fetched!
-const fallbackProducts = [
-    {
-        "id": 1,
-        "name": "Gulab Attar",
-        "category": "Floral",
-        "price": 599,
-        "image": "assets/images/products/gulab.jpg",
-        "description": "Handcrafted pure Kannauj rose petals distilled gently to capture timeless luxury."
-    },
-    {
-        "id": 2,
-        "name": "Mitti Attar",
-        "category": "Earthy",
-        "price": 799,
-        "image": "assets/images/products/mitti.jpg",
-        "description": "The scent of first rain falling on baked soil, traditional and incredibly calming."
-    },
-    {
-        "id": 3,
-        "name": "White Oud",
-        "category": "Woody",
-        "price": 999,
-        "image": "assets/images/products/white-oud.jpg",
-        "description": "Rich resinous Agarwood balanced perfectly with soft vanilla and light spices."
-    },
-    {
-        "id": 4,
-        "name": "Mogra Attar",
-        "category": "Floral",
-        "price": 649,
-        "image": "assets/images/products/mogra.jpg",
-        "description": "Sweet, calming Jasmine Sambac blossoms extracted in a traditional sandalwood base."
-    },
-    {
-        "id": 5,
-        "name": "Kesar Chandan",
-        "category": "Spicy",
-        "price": 899,
-        "image": "assets/images/products/kesar-chandan.jpg",
-        "description": "Premium Kashmiri Saffron infused inside a creamy Mysore Sandalwood base."
-    },
-    {
-        "id": 6,
-        "name": "Royal Amber",
-        "category": "Woody",
-        "price": 1199,
-        "image": "assets/images/products/amber.jpg",
-        "description": "Deep balsamic warmth blended with golden resins for an imperial experience."
-    }
-];
 
 // --- Initialize Shop ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -70,27 +18,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * Loads products from JSON, or uses our fallback list if offline or running locally
- */
-function loadProducts() {
-    fetch('json/products.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Could not fetch products.json, using fallback data.");
-            }
-            return response.json();
-        })
-        .then(data => {
-            allProducts = data;
-            initializeShopFlow();
-        })
-        .catch(error => {
-            console.warn(error.message);
-            // Use the fallback products list so the shop page never looks broken
-            allProducts = fallbackProducts;
-            initializeShopFlow();
-        });
-}
+ */async function loadProducts(){
 
+    try{
+        const response=await fetch("http://localhost:5000/api/products");
+        if(!response.ok){
+            throw new Error("Unable to fetch products.");
+        }
+        const data=await response.json();
+        allProducts=data.products;
+        initializeShopFlow();
+
+    }catch(error){
+
+        console.error(error);
+        allProducts=[];
+        initializeShopFlow();
+
+    }
+
+}
 /**
  * Common startup procedures once products are ready
  */
@@ -368,3 +315,4 @@ window.addToWishlistDirect = function(id) {
 window.viewProductDetail = function(id) {
     window.location.href = `product.html?id=${id}`;
 };
+

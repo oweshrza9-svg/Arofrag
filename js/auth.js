@@ -47,28 +47,57 @@ function setupRegistrationForm() {
         if (confirmPasswordInput && password !== confirmPassword) {
             window.showToast('Passwords do not match. Please try again.', 'error');
             return;
-        }
+        }fetch("http://localhost:5000/api/auth/register",{
 
-        // Check if an account with this email already exists in storage
-        const existingUsers = JSON.parse(localStorage.getItem('arofrag_registered_users')) || [];
-        const userExists = existingUsers.some(user => user.email.toLowerCase() === email.toLowerCase());
+    method:"POST",
 
-        if (userExists) {
-            window.showToast('An account with this email already exists.', 'error');
-            return;
-        }
+    headers:{
 
-        // Create and save new credentials to local storage
-        const newUser = {
-            fullName: fullName,
-            email: email.toLowerCase(),
-            password: password // stored securely in local memory for project demonstration
-        };
+        "Content-Type":"application/json"
 
-        existingUsers.push(newUser);
-        localStorage.setItem('arofrag_registered_users', JSON.stringify(existingUsers));
+    },
 
-        window.showToast('Registration successful! Redirecting to login...', 'success');
+    body:JSON.stringify({
+
+        fullName,
+
+        email,
+
+        password,
+
+        phone:document.getElementById("registerPhone").value
+
+    })
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+    if(data.success){
+
+        window.showToast("Registration Successful!","success");
+
+        setTimeout(()=>{
+
+            window.location.href="login.html";
+
+        },1500);
+
+    }else{
+
+        window.showToast(data.message,"error");
+
+    }
+
+})
+
+.catch(()=>{
+
+    window.showToast("Server Error","error");
+
+});
 
         // Automatically send them to login page after 1.5 seconds
         setTimeout(() => {
@@ -100,8 +129,54 @@ function setupLoginForm() {
         }
 
         // Retrieve the registered users array
-        const registeredUsers = JSON.parse(localStorage.getItem('arofrag_registered_users')) || [];
+fetch("http://localhost:5000/api/auth/login",{
 
+    method:"POST",
+
+    headers:{
+        "Content-Type":"application/json"
+    },
+
+    body:JSON.stringify({
+
+        email,
+        password
+
+    })
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+    if(data.success){
+
+        localStorage.setItem("token",data.token);
+
+        localStorage.setItem("user",JSON.stringify(data.user));
+
+        window.showToast("Login Successful","success");
+
+        setTimeout(()=>{
+
+            window.location.href="index.html";
+
+        },1500);
+
+    }else{
+
+        window.showToast(data.message,"error");
+
+    }
+
+})
+
+.catch(()=>{
+
+    window.showToast("Server Error","error");
+
+});
         // Try matching credentials
         let matchedUser = null;
         for (let i = 0; i < registeredUsers.length; i++) {

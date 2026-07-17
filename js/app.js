@@ -22,9 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === window.CART_KEY || e.key === window.WISHLIST_KEY) {
             updateGlobalBadges();
         }
-        if (e.key === window.USER_KEY) {
-            initUserSessionUI();
+        if(e.key==="user"){
+         initUserSessionUI();
         }
+
     });
 });
 
@@ -116,8 +117,7 @@ function initUserSessionUI() {
     const userElement = document.querySelector('a[href="login.html"]');
     if (!userElement) return;
 
-    const loggedInUser = JSON.parse(localStorage.getItem(window.USER_KEY));
-
+const loggedInUser = JSON.parse(localStorage.getItem("user"));
     if (loggedInUser && loggedInUser.fullName) {
         // Create an elegant dropdown structure instead of a hardcoded login link
         const initials = loggedInUser.fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
@@ -180,7 +180,8 @@ function initUserSessionUI() {
         const btnLogout = userElement.querySelector('#btnLogout');
         btnLogout.addEventListener('click', (e) => {
             e.preventDefault();
-            localStorage.removeItem(window.USER_KEY);
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
             window.showToast('Logged out successfully.');
             setTimeout(() => {
                 window.location.href = 'index.html';

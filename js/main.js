@@ -68,12 +68,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Dynamic Signature Collection Setup
-    fetch('products.json')
-        .then(res => res.json())
-        .then(products => {
-            renderSignatureCollection(products);
-        })
-        .catch(err => console.error("Error loading products on homepage:", err));
+    fetch("http://localhost:5000/api/products")
+    .then(res=>res.json())
+    .then(data=>{
+
+        renderSignatureCollection(data.products);
+
+    })
+    .catch(error=>{
+
+        console.error("Error loading homepage products:",error);
+
+    });
 });
 
 function renderSignatureCollection(products) {
@@ -81,11 +87,10 @@ function renderSignatureCollection(products) {
     if (!container) return;
 
     // Grab the first 3 or 4 featured products for the homepage
-    const featured = products.filter(p => p.featured).slice(0, 4);
-
+const featured = products.slice(0,4);
     container.innerHTML = featured.map(p => `
         <div class="product-card" data-id="${p.id}">
-            <img src="${p.images[0]}" alt="${p.name}" onclick="window.location.href='product.html?id=${p.id}'" style="cursor: pointer;">
+            <img src="${p.image}" alt="${p.name}" onclick="window.location.href='product.html?id=${p.id}'" style="cursor: pointer;">
             <h3>${p.name}</h3>
             <p class="price">₹${p.price}</p>
             <div class="sizes-container" style="display: flex; gap: 8px; margin: 10px 0; justify-content: center;">
@@ -115,10 +120,12 @@ window.selectHomeSize = function(element) {
 
 // Handler for homepage Add to Cart
 window.handleHomeAddToCart = function(productId) {
-    fetch('products.json')
+  fetch("http://localhost:5000/api/products")
         .then(res => res.json())
-        .then(products => {
-            const product = products.find(p => p.id === productId);
+        .then(data=>{
+
+            const products=data.products;
+            const product = products.find(p => p.id == productId);
             const card = document.querySelector(`.product-card[data-id="${productId}"]`);
             const activeSizeChip = card.querySelector('.size-chip.active') || card.querySelector('.size-chip');
             const size = activeSizeChip ? activeSizeChip.textContent.trim() : product.sizes[0];
@@ -126,3 +133,4 @@ window.handleHomeAddToCart = function(productId) {
             addToCart(product, size, 1);
         });
 };
+
