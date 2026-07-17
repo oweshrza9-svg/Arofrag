@@ -12,31 +12,31 @@ const itemsPerPage = 6;     // Show maximum 6 items per page for a clean layout
 
 // --- Initialize Shop ---
 document.addEventListener('DOMContentLoaded', () => {
-    loadProducts();
     setupEventListeners();
+    loadProducts();
 });
 
 /**
  * Loads products from JSON, or uses our fallback list if offline or running locally
- */async function loadProducts(){
-
-    try{
-        const response=await fetch("http://localhost:5000/api/products");
-        if(!response.ok){
-            throw new Error("Unable to fetch products.");
+ */
+async function loadProducts(){
+    try {
+        const response = await fetch('http://localhost:5000/api/products');
+        if (!response.ok) throw new Error('API unavailable');
+        const data = await response.json();
+        allProducts = Array.isArray(data) ? data : (data.products || []);
+    } catch (error) {
+        try {
+            const localResponse = await fetch('json/products.json');
+            const localData = await localResponse.json();
+            allProducts = Array.isArray(localData) ? localData : (localData.products || []);
+        } catch (localError) {
+            console.error(localError);
+            allProducts = [];
         }
-        const data=await response.json();
-        allProducts=data.products;
+    } finally {
         initializeShopFlow();
-
-    }catch(error){
-
-        console.error(error);
-        allProducts=[];
-        initializeShopFlow();
-
     }
-
 }
 /**
  * Common startup procedures once products are ready
@@ -115,10 +115,12 @@ function applyFiltersAndRender() {
     // 1. Filter by Search Query
     if (searchInput && searchInput.value.trim() !== '') {
         const query = searchInput.value.toLowerCase();
-        tempResults = tempResults.filter(product => 
-            product.name.toLowerCase().includes(query) || 
-            product.description.toLowerCase().includes(query)
-        );
+        tempResults = tempResults.filter(product => {
+            const name = (product.name || '').toLowerCase();
+            const description = (product.description || '').toLowerCase();
+            const category = (product.category || '').toLowerCase();
+            return name.includes(query) || description.includes(query) || category.includes(query);
+        });
     }
 
     // 2. Filter by Category Selectors
@@ -167,7 +169,7 @@ function renderProductsGrid() {
     if (!container) return;
 
     if (filteredProducts.length === 0) {
-        container.innerHTML = '';
+        container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: #666;">No products found.</div>';
         return;
     }
 

@@ -78,6 +78,7 @@ function setupFeaturedFragranceActions() {
 
     const buyButton = section.querySelector('.featured-buy-now');
     const addButton = section.querySelector('.add-to-cart-btn');
+    const detailsButton = section.querySelector('.details-btn');
 
     const product = {
         id: section.getAttribute('data-product-id') || '1',
@@ -131,6 +132,14 @@ function setupFeaturedFragranceActions() {
         addButton.addEventListener('click', (e) => {
             e.preventDefault();
             addHeroProductToCart();
+        });
+    }
+
+    if (detailsButton) {
+        detailsButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const productId = section.getAttribute('data-product-id') || '1';
+            window.location.href = `product.html?id=${productId}`;
         });
     }
 
