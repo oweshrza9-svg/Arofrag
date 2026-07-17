@@ -67,20 +67,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Dynamic Signature Collection Setup
-    fetch("http://localhost:5000/api/products")
-    .then(res=>res.json())
-    .then(data=>{
-
-        renderSignatureCollection(data.products);
-
-    })
-    .catch(error=>{
-
-        console.error("Error loading homepage products:",error);
-
+    // Dynamic Signature Collection Setup// Dynamic Signature Collection Setup - fallback to static JSON for production
+fetch("json/products.json")
+  .then(res => res.json())
+  .then(data => {
+    // Support both {products: [...]} API shape and direct array
+    const products = Array.isArray(data) ? data : (data.products || data);
+    renderSignatureCollection(products);
+  })
+  .catch(error => {
+    console.error("Error loading homepage products:", error);
+    // Silent fallback - container stays empty as before
+  });
     });
-});
 
 function renderSignatureCollection(products) {
     const container = document.querySelector('#signature-collection-grid');
@@ -90,8 +89,9 @@ function renderSignatureCollection(products) {
 const featured = products.slice(0,4);
     container.innerHTML = featured.map(p => `
         <div class="product-card" data-id="${p.id}">
-            <img src="${p.image}" alt="${p.name}" onclick="window.location.href='product.html?id=${p.id}'" style="cursor: pointer;">
-            <h3>${p.name}</h3>
+<img src="${p.image && !p.image.includes('ADD_IMAGE_PATH') ? p.image : 'assets/arologopng.png'}" 
+     alt="${p.name}" onclick="window.location.href='product.html?id=${p.id}'" style="cursor: pointer;">  
+               <h3>${p.name}</h3>
             <p class="price">₹${p.price}</p>
             <div class="sizes-container" style="display: flex; gap: 8px; margin: 10px 0; justify-content: center;">
                 ${p.sizes.map((s, idx) => `
