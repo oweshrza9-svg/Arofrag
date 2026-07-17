@@ -1,0 +1,651 @@
+/* ===============================
+   AROFRAG Checkout
+   Premium Checkout Design
+=================================*/
+
+:root{
+--primary:#111111;
+--secondary:#222222;
+--gold:#c8a96a;
+--gold-light:#d8bc84;
+--bg:#faf8f5;
+--white:#ffffff;
+--border:#e7e2d8;
+--text:#444;
+--danger:#dc3545;
+--success:#198754;
+--shadow:0 12px 35px rgba(0,0,0,.08);
+--radius:18px;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+background:var(--bg);
+font-family:Poppins,sans-serif;
+color:var(--secondary);
+line-height:1.6;
+}
+
+main{
+padding-bottom:80px;
+}
+
+.container{
+width:min(1200px,92%);
+margin:auto;
+}
+
+/* HERO */
+
+.checkout-hero{
+padding:80px 0;
+background:linear-gradient(135deg,#161616,#2d2d2d);
+color:white;
+text-align:center;
+margin-bottom:60px;
+}
+
+.checkout-hero h1{
+font-size:42px;
+font-weight:700;
+margin-bottom:15px;
+letter-spacing:.5px;
+}
+
+.checkout-hero p{
+opacity:.85;
+font-size:18px;
+}
+
+/* Layout */
+
+.checkout-layout{
+display:grid;
+grid-template-columns:1.4fr .8fr;
+gap:40px;
+align-items:flex-start;
+}
+
+/* FORM */
+
+.checkout-form{
+background:white;
+padding:40px;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+}
+
+.checkout-form h2{
+font-size:28px;
+margin-bottom:30px;
+color:#111;
+}
+
+.input-group{
+display:flex;
+flex-direction:column;
+margin-bottom:22px;
+}
+
+.input-group label{
+margin-bottom:8px;
+font-weight:600;
+color:#444;
+}
+
+.input-group input,
+.input-group textarea{
+width:100%;
+padding:15px;
+border:1px solid var(--border);
+border-radius:12px;
+font-size:15px;
+transition:.3s;
+background:#fff;
+}
+
+.input-group textarea{
+resize:none;
+}
+
+.input-group input:focus,
+.input-group textarea:focus{
+outline:none;
+border-color:var(--gold);
+box-shadow:0 0 0 4px rgba(200,169,106,.15);
+}
+
+.input-row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px;
+}
+
+/* PAYMENT */
+
+.payment-section{
+margin-top:35px;
+}
+
+.payment-section h2{
+font-size:24px;
+margin-bottom:20px;
+}
+
+.payment-option{
+display:flex;
+align-items:center;
+gap:12px;
+padding:15px;
+margin-bottom:14px;
+border:1px solid var(--border);
+border-radius:14px;
+cursor:pointer;
+transition:.3s;
+background:white;
+}
+
+.payment-option:hover{
+border-color:var(--gold);
+background:#fcfaf5;
+}
+
+.payment-option input{
+transform:scale(1.2);
+accent-color:var(--gold);
+}
+
+/* BUTTON */
+
+.place-order-btn{
+width:100%;
+padding:17px;
+margin-top:25px;
+border:none;
+border-radius:14px;
+background:var(--gold);
+color:white;
+font-size:17px;
+font-weight:600;
+cursor:pointer;
+transition:.35s;
+}
+
+.place-order-btn:hover{
+background:#b58e46;
+transform:translateY(-2px);
+}
+
+/* SUMMARY */
+
+.order-summary{
+background:white;
+padding:35px;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+position:sticky;
+top:30px;
+}
+
+.order-summary h2{
+margin-bottom:25px;
+font-size:28px;
+}
+
+/* CART ITEMS */
+
+.checkout-items{
+display:flex;
+flex-direction:column;
+gap:18px;
+margin-bottom:25px;
+max-height:420px;
+overflow:auto;
+padding-right:5px;
+}
+
+.checkout-items::-webkit-scrollbar{
+width:6px;
+}
+
+.checkout-items::-webkit-scrollbar-thumb{
+background:var(--gold);
+border-radius:20px;
+}
+
+/* ITEM CARD */
+
+.checkout-item{
+display:flex;
+gap:15px;
+padding-bottom:18px;
+border-bottom:1px solid #ececec;
+}
+
+.checkout-item img{
+width:90px;
+height:90px;
+border-radius:12px;
+object-fit:cover;
+background:#fff;
+border:1px solid #eee;
+}
+
+.checkout-item-info{
+flex:1;
+}
+
+.checkout-item-title{
+font-size:17px;
+font-weight:600;
+margin-bottom:5px;
+}
+
+.checkout-item-size{
+font-size:13px;
+color:#777;
+margin-bottom:5px;
+}
+
+.checkout-item-price{
+font-weight:700;
+color:var(--gold);
+font-size:17px;
+}
+
+.summary-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 0;
+font-size:16px;
+}
+
+.summary-row.total{
+font-size:22px;
+font-weight:700;
+color:#111;
+border-top:2px solid var(--border);
+margin-top:15px;
+padding-top:20px;
+}
+
+hr{
+border:none;
+height:1px;
+background:#ececec;
+margin:20px 0;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:992px){
+
+.checkout-layout{
+grid-template-columns:1fr;
+}
+
+.order-summary{
+position:relative;
+top:0;
+}
+
+}
+
+@media(max-width:768px){
+
+.checkout-form,
+.order-summary{
+padding:25px;
+}
+
+.checkout-hero{
+padding:55px 0;
+}
+
+.checkout-hero h1{
+font-size:34px;
+}
+
+.input-row{
+grid-template-columns:1fr;
+}
+
+}
+
+@media(max-width:500px){
+
+.checkout-item{
+flex-direction:column;
+align-items:center;
+text-align:center;
+}
+
+.checkout-item img{
+width:120px;
+height:120px;
+}
+
+.checkout-hero h1{
+font-size:30px;
+}
+
+}
+/*==================================
+PREMIUM CART ITEM CONTROLS
+==================================*/
+
+.checkout-item-details{
+flex:1;
+display:flex;
+flex-direction:column;
+justify-content:center;
+gap:8px;
+}
+
+.checkout-item-title{
+font-size:18px;
+font-weight:600;
+color:#111;
+}
+
+.checkout-item-size{
+font-size:13px;
+color:#777;
+}
+
+.checkout-item-price{
+font-size:18px;
+font-weight:700;
+color:var(--gold);
+}
+
+.checkout-item-actions{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-top:12px;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.quantity-controls{
+display:flex;
+align-items:center;
+border:1px solid var(--border);
+border-radius:12px;
+overflow:hidden;
+background:#fff;
+}
+
+.quantity-controls button{
+width:38px;
+height:38px;
+border:none;
+background:#f5f5f5;
+font-size:20px;
+cursor:pointer;
+transition:.3s;
+}
+
+.quantity-controls button:hover{
+background:var(--gold);
+color:#fff;
+}
+
+.quantity-controls span{
+width:45px;
+text-align:center;
+font-weight:600;
+font-size:16px;
+}
+
+.remove-item-btn{
+padding:10px 16px;
+border:none;
+border-radius:10px;
+background:#dc3545;
+color:#fff;
+cursor:pointer;
+font-size:14px;
+transition:.3s;
+}
+
+.remove-item-btn:hover{
+background:#b02a37;
+transform:translateY(-2px);
+}
+
+/*==============================
+COUPON BOX
+==============================*/
+
+.coupon-box{
+display:flex;
+gap:12px;
+margin:25px 0;
+}
+
+.coupon-box input{
+flex:1;
+padding:14px;
+border:1px solid var(--border);
+border-radius:12px;
+font-size:15px;
+}
+
+.coupon-box input:focus{
+outline:none;
+border-color:var(--gold);
+}
+
+.apply-coupon-btn{
+padding:14px 24px;
+border:none;
+border-radius:12px;
+background:#111;
+color:#fff;
+cursor:pointer;
+transition:.3s;
+}
+
+.apply-coupon-btn:hover{
+background:var(--gold);
+}
+
+/*==============================
+EMPTY CART
+==============================*/
+
+.empty-cart{
+padding:70px 20px;
+text-align:center;
+}
+
+.empty-cart i{
+font-size:70px;
+color:var(--gold);
+margin-bottom:25px;
+}
+
+.empty-cart h3{
+font-size:30px;
+margin-bottom:12px;
+}
+
+.empty-cart p{
+color:#666;
+margin-bottom:30px;
+}
+
+.empty-cart a{
+display:inline-block;
+padding:14px 28px;
+background:var(--gold);
+color:#fff;
+text-decoration:none;
+border-radius:12px;
+transition:.3s;
+}
+
+.empty-cart a:hover{
+background:#b58e46;
+transform:translateY(-2px);
+}
+
+/*==============================
+DISCOUNT
+==============================*/
+
+.discount-badge{
+display:inline-block;
+background:#198754;
+color:#fff;
+padding:5px 12px;
+font-size:13px;
+border-radius:30px;
+font-weight:600;
+margin-top:8px;
+}
+
+.summary-row.discount{
+color:#198754;
+font-weight:600;
+}
+
+/*==============================
+SUCCESS MESSAGE
+==============================*/
+
+.checkout-success{
+padding:70px 30px;
+text-align:center;
+display:none;
+}
+
+.checkout-success i{
+font-size:90px;
+color:#198754;
+margin-bottom:25px;
+}
+
+.checkout-success h2{
+font-size:36px;
+margin-bottom:15px;
+}
+
+.checkout-success p{
+font-size:17px;
+color:#666;
+margin-bottom:35px;
+}
+
+.checkout-success a{
+display:inline-block;
+padding:14px 28px;
+background:var(--gold);
+color:#fff;
+text-decoration:none;
+border-radius:12px;
+transition:.3s;
+}
+
+.checkout-success a:hover{
+background:#b58e46;
+}
+
+/*==============================
+LOADING
+==============================*/
+
+.checkout-loading{
+display:flex;
+justify-content:center;
+align-items:center;
+padding:70px;
+}
+
+.checkout-spinner{
+width:55px;
+height:55px;
+border:5px solid #eee;
+border-top:5px solid var(--gold);
+border-radius:50%;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
+}
+
+/*==============================
+HOVER EFFECTS
+==============================*/
+
+.checkout-item{
+transition:.35s;
+}
+
+.checkout-item:hover{
+transform:translateY(-4px);
+box-shadow:0 12px 30px rgba(0,0,0,.08);
+padding:15px;
+border-radius:16px;
+background:#fffdf9;
+}
+
+.order-summary{
+transition:.35s;
+}
+
+.order-summary:hover{
+transform:translateY(-4px);
+}
+
+.checkout-form{
+transition:.35s;
+}
+
+.checkout-form:hover{
+transform:translateY(-4px);
+}
+
+/*==============================
+RESPONSIVE
+==============================*/
+
+@media(max-width:650px){
+
+.checkout-item-actions{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.quantity-controls{
+width:100%;
+justify-content:center;
+}
+
+.quantity-controls span{
+flex:1;
+}
+
+.remove-item-btn{
+width:100%;
+}
+
+.coupon-box{
+flex-direction:column;
+}
+
+.apply-coupon-btn{
+width:100%;
+}
+
+}

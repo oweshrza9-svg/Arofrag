@@ -108,7 +108,7 @@ const productId = urlParams.get("id");
  */
 function initializeProductPage(productsArray, targetId) {
     // Find matching product
-const found = productsArray.find(item=>item.id==targetId);   
+const found = productsArray.find(item => String(item.id) === String(targetId));
  if (!found) {
         // Product doesn't exist, go back to shop
         window.location.href = 'shop.html';
@@ -229,8 +229,9 @@ function setupQuantityCounters() {
  * 6. Sets up listeners for add-to-cart and wishlist button configurations
  */
 function setupSubmissionButtons() {
-    const btnAddToCart = document.getElementById('addToCartBtn') || document.querySelector('.add-to-cart-btn');
-    const btnAddToWishlist = document.getElementById('addToWishlistBtn') || document.querySelector('.add-to-wishlist-btn');
+    const btnAddToCart = document.getElementById('addToCartBtn') || document.querySelector('.add-cart-btn');
+    const btnAddToWishlist = document.getElementById('addToWishlistBtn') || document.querySelector('.wishlist-btn');
+    const btnBuyNow = document.querySelector('.buy-now-btn');
 
     if (btnAddToCart) {
         btnAddToCart.addEventListener('click', () => {
@@ -263,6 +264,41 @@ function setupSubmissionButtons() {
             window.showToast(`${qtyToAdd} x ${currentProduct.name} (${selectedSize}) added to cart.`);
         });
     }
+    if (btnBuyNow) {
+    btnBuyNow.addEventListener('click', () => {
+        if (!currentProduct) return;
+
+        const inputQty = document.querySelector('.qty-input') ||
+                         document.getElementById('qtyInput') ||
+                         document.getElementById('quantity');
+
+        const qtyToAdd = inputQty ? parseInt(inputQty.value) || 1 : 1;
+
+        let cart = JSON.parse(localStorage.getItem(window.CART_KEY)) || [];
+
+        const existingIndex = cart.findIndex(
+            item => item.name === currentProduct.name && item.size === selectedSize
+        );
+
+        if (existingIndex !== -1) {
+            cart[existingIndex].quantity =
+                (parseInt(cart[existingIndex].quantity) || 0) + qtyToAdd;
+        } else {
+            cart.push({
+                name: currentProduct.name,
+                price: selectedPrice,
+                image: currentProduct.image,
+                size: selectedSize,
+                quantity: qtyToAdd
+            });
+        }
+
+        localStorage.setItem(window.CART_KEY, JSON.stringify(cart));
+        window.dispatchEvent(new CustomEvent('cartUpdated'));
+
+        window.location.href = 'checkout.html';
+    });
+}
 
     if (btnAddToWishlist) {
         btnAddToWishlist.addEventListener('click', () => {
