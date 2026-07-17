@@ -64,13 +64,83 @@ function addToCart(product, size, quantity = 1) {
     }
     
     localStorage.setItem(cartKey, JSON.stringify(cart));
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
     updateCartBadge();
     showToast(`${product.name} (${size}) added to cart!`);
+}
+
+function setupFeaturedFragranceActions() {
+    const section = document.querySelector('.showcase');
+    if (!section || section.dataset.heroBound === 'true') return;
+
+    const sizeButtons = section.querySelectorAll('.size-chip');
+    if (!sizeButtons.length) return;
+
+    const buyButton = section.querySelector('.featured-buy-now');
+    const addButton = section.querySelector('.add-to-cart-btn');
+
+    const product = {
+        id: section.getAttribute('data-product-id') || '1',
+        name: section.getAttribute('data-product-name') || 'Mogra Attar',
+        price: Number(section.getAttribute('data-product-price') || 399),
+        image: section.getAttribute('data-product-image') || 'assets/products/5Mogra/img/3.jpg'
+    };
+
+    let selectedSize = (sizeButtons[0]?.getAttribute('data-size') || sizeButtons[0]?.textContent.trim() || '3ml');
+
+    function activateSize(button) {
+        sizeButtons.forEach(btn => {
+            btn.classList.remove('active');
+            btn.style.borderColor = '';
+            btn.style.color = '';
+        });
+
+        button.classList.add('active');
+        button.style.borderColor = '#C8A96A';
+        button.style.color = '#C8A96A';
+        selectedSize = button.getAttribute('data-size') || button.textContent.trim();
+        section.setAttribute('data-selected-size', selectedSize);
+    }
+
+    sizeButtons.forEach(button => {
+        button.addEventListener('click', () => activateSize(button));
+    });
+
+    const defaultButton = Array.from(sizeButtons).find(button => button.classList.contains('active')) || sizeButtons[0];
+    if (defaultButton) activateSize(defaultButton);
+
+    function addHeroProductToCart() {
+        const size = selectedSize || (sizeButtons[0]?.getAttribute('data-size') || sizeButtons[0]?.textContent.trim() || '3ml');
+        addToCart({ ...product, _id: product.id, id: product.id }, size, 1);
+        return size;
+    }
+
+    function buyHeroProduct() {
+        addHeroProductToCart();
+        window.location.href = 'checkout.html';
+    }
+
+    if (buyButton) {
+        buyButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            buyHeroProduct();
+        });
+    }
+
+    if (addButton) {
+        addButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            addHeroProductToCart();
+        });
+    }
+
+    section.dataset.heroBound = 'true';
 }
 
 // --- HOME PAGE LOGIC ---
 document.addEventListener('DOMContentLoaded', () => {
     updateCartBadge();
+    setupFeaturedFragranceActions();
     
     // Smooth scroll for "Shop Now" hero button
     const shopNowBtn = document.querySelector('a[href="#signature-collection"]');
