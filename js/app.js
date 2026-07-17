@@ -36,6 +36,11 @@ function updateGlobalBadges() {
     // A. Cart Counter Calculations
     const cart = JSON.parse(localStorage.getItem(window.CART_KEY)) || [];
     const totalCartItems = cart.reduce((acc, item) => acc + (parseInt(item.quantity) || 0), 0);
+
+    document.querySelectorAll('.cart-count').forEach(countEl => {
+        countEl.textContent = totalCartItems;
+        countEl.style.display = totalCartItems > 0 ? 'inline-flex' : 'none';
+    });
     
     // Find shopping bags (using icon parents or classes)
     const cartIcons = document.querySelectorAll('a[href="cart.html"]');

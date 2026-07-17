@@ -4,6 +4,7 @@
 
 const FREE_SHIPPING_THRESHOLD = 999;
 const SHIPPING_CHARGE = 150;
+let checkoutEventsBound = false;
 
 document.addEventListener("DOMContentLoaded", () => {
     renderCheckout();
@@ -39,6 +40,7 @@ function renderCheckout() {
     const container = document.getElementById("checkoutItems");
 
     const subtotalEl = document.getElementById("checkoutSubtotal");
+    const shippingEl = document.getElementById("checkoutShipping");
     const totalEl = document.getElementById("checkoutTotal");
 
     if (!container) return;
@@ -57,8 +59,9 @@ function renderCheckout() {
             </div>
         `;
 
-        subtotalEl.textContent = "₹0";
-        totalEl.textContent = "₹0";
+        if (subtotalEl) subtotalEl.textContent = "₹0";
+        if (shippingEl) shippingEl.textContent = "FREE";
+        if (totalEl) totalEl.textContent = "₹0";
 
         return;
     }
@@ -249,15 +252,20 @@ async function handleCheckoutSubmit(e){
 
     }
 
+    const paymentInput = document.querySelector(
+        'input[name="payment"]:checked'
+    );
+
+    if (!paymentInput) {
+        window.showToast("Please select a payment method.", "error");
+        return;
+    }
+
     const orderData={
 
         customer,
 
-        paymentMethod:
-
-        document.querySelector(
-            'input[name="payment"]:checked'
-        ).value,
+        paymentMethod: paymentInput.value,
 
         items:cart,
 

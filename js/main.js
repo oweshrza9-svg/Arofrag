@@ -135,10 +135,27 @@ window.selectHomeSize = function(element) {
 
 // Handler for homepage Add to Cart
 window.handleHomeAddToCart = function(productId) {
+    const card = document.querySelector(`.product-card[data-id="${productId}"]`);
+    const button = card ? card.querySelector('.add-to-cart-btn') : null;
+
+    if (button && button.dataset.busy === 'true') return;
+    if (button) {
+        button.dataset.busy = 'true';
+        button.disabled = true;
+        button.textContent = 'Adding...';
+    }
+
+    function stopBusy() {
+        if (button) {
+            button.dataset.busy = 'false';
+            button.disabled = false;
+            button.textContent = 'Add to Cart';
+        }
+    }
+
     function doAddToCart(products) {
         const product = products.find(p => String(p._id || p.id) === String(productId));
         if (!product) return;
-        const card = document.querySelector(`.product-card[data-id="${productId}"]`);
         const activeSizeChip = card ? card.querySelector('.size-chip.active') || card.querySelector('.size-chip') : null;
         const size = activeSizeChip ? activeSizeChip.textContent.trim() : (product.sizes ? product.sizes[0] : '6ml');
         addToCart(product, size, 1);
@@ -152,6 +169,7 @@ window.handleHomeAddToCart = function(productId) {
                 .then(res => res.json())
                 .then(data => doAddToCart(Array.isArray(data) ? data : (data.products || data)))
                 .catch(() => {});
-        });
+        })
+        .finally(stopBusy);
 };
 

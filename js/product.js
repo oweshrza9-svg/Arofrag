@@ -120,10 +120,10 @@ const found = productsArray.find(item => String(item._id || item.id) === String(
 
     // Render Basic Info
     const pName = document.querySelector('.product-title') || document.getElementById('productName');
-    const pPrice = document.querySelector('.product-price') || document.getElementById('productPrice');
+    const pPrice = document.querySelector('.current-price') || document.querySelector('.product-price') || document.getElementById('productPrice');
     const pDesc = document.querySelector('.product-description') || document.getElementById('productDescription');
     const pCategory = document.querySelector('.product-category') || document.getElementById('productCategory');
-    const pMainImg = document.getElementById('mainProductImage') || document.getElementById('mainProductImg') || document.querySelector('.main-img');
+    const pMainImg = document.getElementById('mainProductImage') || document.getElementById('mainProductImg') || document.querySelector('.main-img img');
 
     if (pName) pName.textContent = currentProduct.name;
     if (pDesc) pDesc.textContent = currentProduct.description;
@@ -135,6 +135,9 @@ const found = productsArray.find(item => String(item._id || item.id) === String(
        ? currentProduct.image 
        : 'assets/arologopng.png';
         pMainImg.alt = currentProduct.name;
+        pMainImg.onerror = function() {
+            this.src = 'assets/arologopng.png';
+        };
     }
 
     // Set up interactive UI control listeners
@@ -148,18 +151,15 @@ const found = productsArray.find(item => String(item._id || item.id) === String(
  * 3. Handles click actions on secondary thumbnail images
  */
 function setupThumbnailGallery() {
-    const thumbnails = document.querySelectorAll('.thumbnail-img');
-    const mainImg = document.getElementById('mainProductImg') || document.querySelector('.main-img');
+    const thumbnails = document.querySelectorAll('.thumbnail-img, .thumbnail');
+    const mainImg = document.getElementById('mainProductImage') || document.getElementById('mainProductImg') || document.querySelector('.main-img img');
 
     if (!thumbnails.length || !mainImg) return;
 
     thumbnails.forEach(thumb => {
         thumb.addEventListener('click', () => {
-            // Remove active classes
             thumbnails.forEach(t => t.classList.remove('active'));
-            // Set clicked thumbnail active
             thumb.classList.add('active');
-            // Swap main display image
             mainImg.src = thumb.src;
         });
     });
@@ -171,7 +171,7 @@ function setupThumbnailGallery() {
 function setupSizeSelectors() {
     // Handle size buttons (.size-btn) with click events
     const sizeBtns = document.querySelectorAll('.size-btn');
-    const pPrice = document.querySelector('.product-price') || document.getElementById('productPrice');
+    const pPrice = document.querySelector('.current-price') || document.querySelector('.product-price') || document.getElementById('productPrice');
 
     if (!sizeBtns.length) return;
 
@@ -242,21 +242,27 @@ function setupSubmissionButtons() {
 
     if (btnAddToCart) {
         btnAddToCart.addEventListener('click', () => {
-            if (!currentProduct) return;
+            if (!currentProduct || btnAddToCart.dataset.busy === 'true') return;
+
+            btnAddToCart.dataset.busy = 'true';
+            btnAddToCart.disabled = true;
+            btnAddToCart.textContent = 'Adding...';
 
             const inputQty = document.querySelector('.qty-input') || document.getElementById('qtyInput');
             const qtyToAdd = inputQty ? parseInt(inputQty.value) || 1 : 1;
 
             let cart = JSON.parse(localStorage.getItem(window.CART_KEY)) || [];
-
-            // Check if product already exists in cart with this exact size
-            const existingIndex = cart.findIndex(item => item.name === currentProduct.name && item.size === selectedSize);
+            const productId = String(currentProduct._id || currentProduct.id);
+            const existingIndex = cart.findIndex(item => {
+                const itemId = String(item.id || item._id || '');
+                return (itemId && itemId === productId) || (item.name === currentProduct.name && item.size === selectedSize);
+            });
 
             if (existingIndex !== -1) {
                 cart[existingIndex].quantity = (parseInt(cart[existingIndex].quantity) || 0) + qtyToAdd;
             } else {
                 cart.push({
-                    id: String(currentProduct._id || currentProduct.id),
+                    id: productId,
                     name: currentProduct.name,
                     price: selectedPrice,
                     image: currentProduct.image,
@@ -266,56 +272,61 @@ function setupSubmissionButtons() {
             }
 
             localStorage.setItem(window.CART_KEY, JSON.stringify(cart));
-            
-            // Instantly update badge counters across navbar
             window.dispatchEvent(new CustomEvent('cartUpdated'));
             window.showToast(`${qtyToAdd} x ${currentProduct.name} (${selectedSize}) added to cart.`);
+
+            btnAddToCart.dataset.busy = 'false';
+            btnAddToCart.disabled = false;
+            btnAddToCart.textContent = 'Add To Cart';
         });
     }
+
     if (btnBuyNow) {
-    btnBuyNow.addEventListener('click', () => {
-        if (!currentProduct) return;
+        btnBuyNow.addEventListener('click', () => {
+            if (!currentProduct || btnBuyNow.dataset.busy === 'true') return;
 
-        const inputQty = document.querySelector('.qty-input') ||
-                         document.getElementById('qtyInput') ||
-                         document.getElementById('quantity');
+            btnBuyNow.dataset.busy = 'true';
+            btnBuyNow.disabled = true;
+            btnBuyNow.textContent = 'Preparing...';
 
-        const qtyToAdd = inputQty ? parseInt(inputQty.value) || 1 : 1;
+            const inputQty = document.querySelector('.qty-input') ||
+                             document.getElementById('qtyInput') ||
+                             document.getElementById('quantity');
 
-        let cart = JSON.parse(localStorage.getItem(window.CART_KEY)) || [];
+            const qtyToAdd = inputQty ? parseInt(inputQty.value) || 1 : 1;
 
-        const existingIndex = cart.findIndex(
-            item => item.name === currentProduct.name && item.size === selectedSize
-        );
-
-        if (existingIndex !== -1) {
-            cart[existingIndex].quantity =
-                (parseInt(cart[existingIndex].quantity) || 0) + qtyToAdd;
-        } else {
-            cart.push({
-                id: String(currentProduct._id || currentProduct.id),
-                name: currentProduct.name,
-                price: selectedPrice,
-                image: currentProduct.image,
-                size: selectedSize,
-                quantity: qtyToAdd
+            let cart = JSON.parse(localStorage.getItem(window.CART_KEY)) || [];
+            const productId = String(currentProduct._id || currentProduct.id);
+            const existingIndex = cart.findIndex(item => {
+                const itemId = String(item.id || item._id || '');
+                return (itemId && itemId === productId) || (item.name === currentProduct.name && item.size === selectedSize);
             });
-        }
 
-        localStorage.setItem(window.CART_KEY, JSON.stringify(cart));
-        window.dispatchEvent(new CustomEvent('cartUpdated'));
+            if (existingIndex !== -1) {
+                cart[existingIndex].quantity =
+                    (parseInt(cart[existingIndex].quantity) || 0) + qtyToAdd;
+            } else {
+                cart.push({
+                    id: productId,
+                    name: currentProduct.name,
+                    price: selectedPrice,
+                    image: currentProduct.image,
+                    size: selectedSize,
+                    quantity: qtyToAdd
+                });
+            }
 
-        window.location.href = 'checkout.html';
-    });
-}
+            localStorage.setItem(window.CART_KEY, JSON.stringify(cart));
+            window.dispatchEvent(new CustomEvent('cartUpdated'));
+            window.location.href = 'checkout.html';
+        });
+    }
 
     if (btnAddToWishlist) {
         btnAddToWishlist.addEventListener('click', () => {
             if (!currentProduct) return;
 
             let wishlist = JSON.parse(localStorage.getItem(window.WISHLIST_KEY)) || [];
-
-            // Prevent duplicating identical name items
             const alreadySaved = wishlist.some(item => item.name === currentProduct.name);
 
             if (alreadySaved) {
@@ -331,8 +342,6 @@ function setupSubmissionButtons() {
             });
 
             localStorage.setItem(window.WISHLIST_KEY, JSON.stringify(wishlist));
-            
-            // Update wishlist hearts
             window.dispatchEvent(new CustomEvent('wishlistUpdated'));
             window.showToast(`${currentProduct.name} saved to wishlist.`);
         });

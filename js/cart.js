@@ -38,9 +38,14 @@ function renderCart() {
 
     // 1. Update Badge Counts on all matching elements across the page
     const totalItems = cart.reduce((acc, item) => acc + (parseInt(item.quantity) || 0), 0);
+    const countElements = document.querySelectorAll('.cart-count');
     badgeElements.forEach(badge => {
         badge.textContent = totalItems;
         badge.style.display = totalItems > 0 ? 'flex' : 'none';
+    });
+    countElements.forEach(countEl => {
+        countEl.textContent = totalItems;
+        countEl.style.display = totalItems > 0 ? 'inline-flex' : 'none';
     });
 
     // Dispatch a custom event in case navbar elements need to listen to cart changes
