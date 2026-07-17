@@ -108,8 +108,8 @@ const productId = urlParams.get("id");
  */
 function initializeProductPage(productsArray, targetId) {
     // Find matching product
-    const found = productsArray.find(item=>item.id==targetId);    
-    if (!found) {
+const found = productsArray.find(item=>item.id==targetId);   
+ if (!found) {
         // Product doesn't exist, go back to shop
         window.location.href = 'shop.html';
         return;

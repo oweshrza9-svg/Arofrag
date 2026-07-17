@@ -80,34 +80,46 @@ fetch("json/products.json")
     // Silent fallback - container stays empty as before
   });
     });
-
 function renderSignatureCollection(products) {
     const container = document.querySelector('#signature-collection-grid');
     if (!container) return;
 
-    // Grab the first 3 or 4 featured products for the homepage
-const featured = products.slice(0,4);
+    const featured = products.slice(0,4);
     container.innerHTML = featured.map(p => `
         <div class="product-card" data-id="${p.id}">
-<img src="${p.image && !p.image.includes('ADD_IMAGE_PATH') ? p.image : 'assets/arologopng.png'}" 
-     alt="${p.name}" onclick="window.location.href='product.html?id=${p.id}'" style="cursor: pointer;">  
-               <h3>${p.name}</h3>
+            <img src="${p.image}" alt="${p.name}" onclick="window.location.href='product.html?id=${p.id}'" style="cursor: pointer; width: 100%; max-height: 200px; object-fit: contain;">
+            <h3>${p.name}</h3>
             <p class="price">₹${p.price}</p>
             <div class="sizes-container" style="display: flex; gap: 8px; margin: 10px 0; justify-content: center;">
                 ${p.sizes.map((s, idx) => `
                     <span class="size-chip ${idx === 0 ? 'active' : ''}" 
-                          onclick="selectHomeSize(this)" 
-                          style="border: 1px solid #ccc; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">
-                        ${s}
-                    </span>
+                          onclick="selectHomeSize(this)">${s}</span>
                 `).join('')}
             </div>
-            <div class="actions" style="display: flex; gap: 10px; justify-content: center;">
+            <div class="actions" style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+                <a href="product.html?id=${p.id}" class="details-btn">View Details</a>
                 <button class="add-to-cart-btn" onclick="handleHomeAddToCart('${p.id}')">Add to Cart</button>
             </div>
         </div>
     `).join('');
 }
+
+// ... keep existing selectHomeSize ...
+
+window.handleHomeAddToCart = function(productId) {
+    fetch("/api/products")  // Updated for production consistency
+        .then(res => res.json())
+        .then(data => {
+            const products = data.products || data;
+            const product = products.find(p => p.id == productId);
+            if (!product) return;
+            const card = document.querySelector(`.product-card[data-id="${productId}"]`);
+            const activeSizeChip = card ? card.querySelector('.size-chip.active') || card.querySelector('.size-chip') : null;
+            const size = activeSizeChip ? activeSizeChip.textContent.trim() : product.sizes[0];
+            addToCart(product, size, 1);  // Reuses existing util function
+        })
+        .catch(err => console.error(err));
+};
 
 // Handler for size chip selection
 window.selectHomeSize = function(element) {
