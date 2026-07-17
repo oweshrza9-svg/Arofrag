@@ -326,7 +326,7 @@ pointer-events:none;
     background: #fff;
     overflow: hidden;
     flex-shrink: 0;
-    height: 320px;
+    height: 360px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -363,7 +363,7 @@ pointer-events:none;
 }
 
 .product-info h3 {
-    color: #fff;
+    color: #C8A96A;
     font-size: 18px;
     margin-bottom: 12px;
     font-family: 'Cormorant Garamond', serif;

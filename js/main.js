@@ -101,18 +101,22 @@ function renderSignatureCollection(products) {
     const featured = products.slice(0,4);
     container.innerHTML = featured.map(p => `
 <div class="product-card" data-id="${p._id || p.id}">
-            <img src="${p.image}" alt="${p.name}" onclick="window.location.href='product.html?id=${p._id || p.id}'" style="cursor: pointer; width: 100%; max-height: 200px; object-fit: contain;">
-            <h3>${p.name}</h3>
-            <p class="price">₹${p.price}</p>
-            <div class="sizes-container" style="display: flex; gap: 8px; margin: 10px 0; justify-content: center;">
-                ${p.sizes.map((s, idx) => `
-                    <span class="size-chip ${idx === 0 ? 'active' : ''}" 
-                          onclick="selectHomeSize(this)">${s}</span>
-                `).join('')}
+            <div class="product-image">
+                <img src="${p.image}" alt="${p.name}" onclick="window.location.href='product.html?id=${p._id || p.id}'">
             </div>
-            <div class="actions" style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-                <a href="product.html?id=${p._id || p.id}" class="details-btn">View Details</a>
-                <button class="add-to-cart-btn" onclick="handleHomeAddToCart('${p._id || p.id}')">Add to Cart</button>
+            <div class="product-info">
+                <h3>${p.name}</h3>
+                <p class="price">₹${p.price}</p>
+                <div class="sizes-container">
+                    ${p.sizes.map((s, idx) => `
+                        <span class="size-chip ${idx === 0 ? 'active' : ''}" 
+                              onclick="selectHomeSize(this)">${s}</span>
+                    `).join('')}
+                </div>
+                <div class="actions">
+                    <a href="product.html?id=${p._id || p.id}" class="details-btn">View Details</a>
+                    <button class="add-to-cart-btn" onclick="handleHomeAddToCart('${p._id || p.id}')">Add to Cart</button>
+                </div>
             </div>
         </div>
     `).join('');
