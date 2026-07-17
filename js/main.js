@@ -4,15 +4,27 @@ const CART_KEY = 'arofrag_cart';
 const WISHLIST_KEY = 'arofrag_wishlist';
 
 function updateCartBadge() {
-    const badge = document.querySelector('.cart-badge');
-    if (!badge) return;
     const cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
     const count = cart.reduce((total, item) => total + item.quantity, 0);
-    badge.textContent = count;
-    badge.style.display = count > 0 ? 'flex' : 'none';
+
+    const badge = document.querySelector('.cart-badge');
+    if (badge) {
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
+    }
+
+    const cartCount = document.querySelector('.cart-count');
+    if (cartCount) {
+        cartCount.textContent = count;
+    }
 }
 
 function showToast(message, type = 'success') {
+    if (typeof window.showToast === 'function') {
+        window.showToast(message, type);
+        return;
+    }
+
     let container = document.getElementById('toast-container');
     if (!container) {
         container = document.createElement('div');
