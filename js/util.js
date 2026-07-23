@@ -80,3 +80,24 @@ window.showToast = function(message, type = 'success') {
         }, 300);
     }, 3000);
 };
+
+window.getCurrentUser = function () {
+    try { return JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null"); }
+    catch { return null; }
+};
+
+window.requireAuthentication = function (returnTo = window.location.pathname.split("/").pop() || "index.html") {
+    if (window.getCurrentUser()) return true;
+    if (document.getElementById("auth-gate")) return false;
+    const dialog = document.createElement("div");
+    dialog.id = "auth-gate";
+    dialog.className = "auth-gate";
+    dialog.setAttribute("role", "dialog");
+    dialog.setAttribute("aria-modal", "true");
+    dialog.setAttribute("aria-labelledby", "auth-gate-title");
+    dialog.innerHTML = `<div class="auth-gate__card"><span class="auth-gate__eyebrow">AROFRAG MEMBER ACCESS</span><h2 id="auth-gate-title">Please sign in to continue your purchase.</h2><p>Your selected fragrances will stay safely in your bag.</p><div class="auth-gate__actions"><a class="premium-button" href="login.html?returnTo=${encodeURIComponent(returnTo)}">Sign In</a><a class="text-button" href="register.html?returnTo=${encodeURIComponent(returnTo)}">Create Account</a></div><button class="auth-gate__close" type="button">Continue Shopping</button></div>`;
+    document.body.appendChild(dialog);
+    dialog.querySelector(".auth-gate__close").addEventListener("click", () => dialog.remove());
+    dialog.querySelector(".premium-button").focus();
+    return false;
+};

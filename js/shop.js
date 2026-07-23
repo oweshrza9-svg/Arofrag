@@ -190,7 +190,7 @@ function renderProductsGrid() {
                     <img src="${itemImg}" alt="${item.name}" style="width: 100%; max-height: 200px; object-fit: contain; margin-bottom: 15px;">
                     <span style="font-size: 0.75rem; text-transform: uppercase; color: #888; letter-spacing: 1px;">${item.category}</span>
                     <h3 style="font-family: 'Cinzel', serif; font-size: 1.1rem; margin: 5px 0 10px 0; color: #111;">${item.name}</h3>
-                    <p style="font-weight: 600; color: #111; margin-bottom: 15px;">${displayPrice}</p>
+                    <p class="price-stack" style="margin-bottom: 15px;"><span class="selling-price">${displayPrice}</span><span class="original-price">₹999</span><span class="discount-badge">60% OFF</span></p>
                 </div>
                 
                 <div style="display: flex; gap: 8px; margin-top: auto;">

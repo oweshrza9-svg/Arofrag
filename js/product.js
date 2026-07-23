@@ -179,13 +179,7 @@ function setupSizeSelectors() {
     const activeBtn = document.querySelector('.size-btn.active');
     if (activeBtn) {
         selectedSize = activeBtn.textContent.trim();
-        if (selectedSize === '3ml') {
-            selectedPrice = Math.round((currentProduct.price * 0.5) + 50);
-        } else if (selectedSize === '12ml') {
-            selectedPrice = Math.round(currentProduct.price * 1.8);
-        } else {
-            selectedPrice = currentProduct.price;
-        }
+        selectedPrice = currentProduct.price;
         if (pPrice) {
             pPrice.textContent = window.formatCurrency(selectedPrice);
         }
@@ -199,15 +193,7 @@ function setupSizeSelectors() {
 
             selectedSize = btn.textContent.trim(); // e.g. "3ml", "6ml", "12ml"
 
-            const basePrice = currentProduct.price;
-            if (selectedSize === '3ml') {
-                selectedPrice = Math.round((basePrice * 0.5) + 50);
-            } else if (selectedSize === '12ml') {
-                selectedPrice = Math.round(basePrice * 1.8);
-            } else {
-                selectedSize = '6ml';
-                selectedPrice = basePrice;
-            }
+            selectedPrice = currentProduct.price;
 
             // Update the display price
             if (pPrice) {
@@ -295,6 +281,7 @@ function setupSubmissionButtons() {
 
     if (btnBuyNow) {
         btnBuyNow.addEventListener('click', () => {
+            if (!window.requireAuthentication('checkout.html')) return;
             if (!currentProduct || btnBuyNow.dataset.busy === 'true') return;
 
             btnBuyNow.dataset.busy = 'true';

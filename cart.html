@@ -89,7 +89,7 @@
                             <span id="cart-total">₹0</span>
                         </div>
 
-                        <button class="checkout-btn" onclick="window.location.href='checkout.html'" style="width: 100%; padding: 15px; background: #000; color: #fff; border: none; font-size: 1rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: background 0.3s;" onmouseover="this.style.background='#222'" onmouseout="this.style.background='#000'">
+                        <button class="checkout-btn" onclick="if(window.requireAuthentication('checkout.html')) window.location.href='checkout.html'" style="width: 100%; padding: 15px; background: #000; color: #fff; border: none; font-size: 1rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: background 0.3s;">
                             Proceed To Checkout
                         </button>
                     </aside>

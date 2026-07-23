@@ -117,6 +117,7 @@ function setupFeaturedFragranceActions() {
     }
 
     function buyHeroProduct() {
+        if (!window.requireAuthentication('checkout.html')) return;
         addHeroProductToCart();
         window.location.href = 'checkout.html';
     }
@@ -185,7 +186,7 @@ function renderSignatureCollection(products) {
             </div>
             <div class="product-info">
                 <h3>${p.name}</h3>
-                <p class="price">₹${p.price}</p>
+                <p class="price-stack"><span class="selling-price">₹399</span><span class="original-price">₹999</span><span class="discount-badge">60% OFF</span></p>
                 <div class="sizes-container">
                     ${p.sizes.map((s, idx) => `
                         <span class="size-chip ${idx === 0 ? 'active' : ''}" 
