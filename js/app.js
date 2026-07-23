@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Initialize global UI updates
     updateGlobalBadges();
     initUserSessionUI();
+    initResponsiveNavigation();
 
     // 2. Setup dynamic event listeners for cross-script communication
     window.addEventListener('cartUpdated', () => {
@@ -28,6 +29,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 });
+
+function initResponsiveNavigation() {
+    const header = document.querySelector('header');
+    const toggle = document.querySelector('.menu-toggle');
+    const menu = document.querySelector('.nav-menu');
+    if (!header || !toggle || !menu) return;
+    if (!menu.id) menu.id = 'primary-navigation';
+    toggle.setAttribute('aria-controls', menu.id);
+    if (!toggle.hasAttribute('aria-expanded')) toggle.setAttribute('aria-expanded', 'false');
+
+    const closeMenu = () => {
+        menu.classList.remove('active');
+        toggle.classList.remove('active');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open navigation menu');
+    };
+
+    toggle.addEventListener('click', () => {
+        const isOpen = menu.classList.toggle('active');
+        toggle.classList.toggle('active', isOpen);
+        toggle.setAttribute('aria-expanded', String(isOpen));
+        toggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+    });
+
+    menu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMenu(); });
+    window.addEventListener('resize', () => { if (window.innerWidth > 1024) closeMenu(); });
+    window.addEventListener('scroll', () => header.classList.toggle('sticky', window.scrollY > 16), { passive: true });
+}
 
 /**
  * Updates cart and wishlist counters dynamically across the entire document
